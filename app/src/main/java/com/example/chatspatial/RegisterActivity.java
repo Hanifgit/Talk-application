@@ -18,6 +18,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class RegisterActivity extends AppCompatActivity {
     private FirebaseUser currentUser;
@@ -26,6 +28,8 @@ public class RegisterActivity extends AppCompatActivity {
     private TextView AlreadyHaveAccount;
     private FirebaseAuth mAuth;
     private ProgressDialog loadingBar;
+
+    private DatabaseReference RootRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,9 +74,13 @@ public class RegisterActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if(task.isSuccessful()){
-                                sendUserToLoginActivity();
+                                String currentUserID = mAuth.getCurrentUser().getUid();
+                                RootRef.child("Users").child(currentUserID).setValue("");
+                                SendUserToSettingActivity();
+                                //sendUserToLoginActivity();
                                 Toast.makeText(RegisterActivity.this,"Account Create Successfully..",Toast.LENGTH_LONG);
                                 loadingBar.dismiss();
+
                             }else{
                                 Toast.makeText(RegisterActivity.this,"Account Create Unsuccessfully..",Toast.LENGTH_LONG);
                                 loadingBar.dismiss();
@@ -88,11 +96,25 @@ public class RegisterActivity extends AppCompatActivity {
         UserPassword = findViewById(R.id.register_password);
         AlreadyHaveAccount = findViewById(R.id.already_have_account);
         mAuth = FirebaseAuth.getInstance();
+        RootRef = FirebaseDatabase.getInstance().getReference();
         loadingBar = new ProgressDialog(this);
+    }
+
+    private void sendUserMainActivity() {
+        Intent mainIntent = new Intent(RegisterActivity.this,MainActivity.class);
+        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(mainIntent);
     }
 
     private void sendUserToLoginActivity() {
         Intent loginIntent = new Intent(RegisterActivity.this,LoginActivity.class);
         startActivity(loginIntent);
+    }
+
+    private void SendUserToSettingActivity()
+    {
+        Intent mainIntent = new Intent(RegisterActivity.this, SettingsActivity.class);
+        startActivity(mainIntent);
+        finish();
     }
 }

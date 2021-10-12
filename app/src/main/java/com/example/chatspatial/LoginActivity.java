@@ -21,14 +21,17 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class LoginActivity extends AppCompatActivity {
     private FirebaseUser currentUser;
     private Button LoginButton,PhoneLoginButton;
     private EditText userEmail,UserPassword;
-    private TextView NedNewAccount,ForgetPassword;
+    private TextView ForgetPassword;
     private FirebaseAuth mAuth;
     private ProgressDialog loadingBar;
+    private DatabaseReference UserRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,38 +40,37 @@ public class LoginActivity extends AppCompatActivity {
 
         InitializeFields();
 
-        NedNewAccount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendUserToRegisterActivity();
-            }
-        });
         LoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 LoginYourAccount();
             }
         });
+        PhoneLoginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendUserToPhoneLoginActivity();
+            }
+        });
+        ForgetPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendUserToResetPasswordActivity();
+            }
+        });
     }
+
 
     private void InitializeFields() {
         LoginButton = findViewById(R.id.login_button);
         PhoneLoginButton = findViewById(R.id.phone_login_button);
         userEmail = findViewById(R.id.login_email);
         UserPassword = findViewById(R.id.login_password);
-        NedNewAccount = findViewById(R.id.need_new_account);
         ForgetPassword = findViewById(R.id.forget_password);
         mAuth = FirebaseAuth.getInstance();
-        currentUser =mAuth.getCurrentUser();
+        currentUser = mAuth.getCurrentUser();
         loadingBar = new ProgressDialog(this);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if(currentUser != null){
-           sendUserMainActivity();
-        }
+        UserRef = FirebaseDatabase.getInstance().getReference().child("Users");
     }
 
     private void LoginYourAccount() {
@@ -92,9 +94,7 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if(task.isSuccessful()){
-                                ToastMessage("Account logged Successfully..");
                                 sendUserMainActivity();
-                                //Toast.makeText(LoginActivity.this, "Account logged Successfully..", Toast.LENGTH_SHORT).show();
                                 loadingBar.dismiss();
                             }else{
                                 ToastMessage("Account logged Unsuccessfully.");
@@ -107,13 +107,24 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void sendUserMainActivity() {
-        Intent loginIntent = new Intent(LoginActivity.this,MainActivity.class);
-        startActivity(loginIntent);
+        Intent mainIntent = new Intent(LoginActivity.this,MainActivity.class);
+        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(mainIntent);
     }
 
     private void sendUserToRegisterActivity() {
         Intent loginIntent = new Intent(LoginActivity.this,RegisterActivity.class);
         startActivity(loginIntent);
+    }
+
+    private void sendUserToPhoneLoginActivity() {
+        Intent phoneLoginIntent = new Intent(LoginActivity.this,PhoneLoginActivity.class);
+        startActivity(phoneLoginIntent);
+    }
+
+    private void sendUserToResetPasswordActivity() {
+        Intent ResetPasswordIntent = new Intent(LoginActivity.this,ResetPasswordActivity.class);
+        startActivity(ResetPasswordIntent);
     }
 
     private void ToastMessage(String mes){

@@ -107,12 +107,12 @@ public class ChatsFragment extends Fragment {
 
                                         if (state.equals("online"))
                                         {
-                                            holder.userStatus.setText("online");
+                                            holder.userStatus.setText("Active");
                                             holder.userOnlineImage.setVisibility(View.VISIBLE);
                                         }
                                         else if (state.equals("offline"))
                                         {
-                                            holder.userStatus.setText("Last Seen: " + date + " " + time);
+                                            holder.userStatus.setText(date + " " + time);
                                         }
                                     }
                                     else

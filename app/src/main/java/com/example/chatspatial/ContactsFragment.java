@@ -95,16 +95,16 @@ public class ContactsFragment extends Fragment {
 
                                 if (state.equals("online"))
                                 {
-                                    //holder.onlineIcon.setVisibility(View.VISIBLE);
+                                    holder.onlineIcon.setVisibility(View.VISIBLE);
                                 }
                                 else if (state.equals("offline"))
                                 {
-                                    //holder.onlineIcon.setVisibility(View.INVISIBLE);
+                                    holder.onlineIcon.setVisibility(View.INVISIBLE);
                                 }
                             }
                             else
                             {
-                                //holder.onlineIcon.setVisibility(View.INVISIBLE);
+                                holder.onlineIcon.setVisibility(View.INVISIBLE);
                             }
 
 
@@ -157,7 +157,7 @@ public class ContactsFragment extends Fragment {
     {
         TextView userName, userStatus;
         CircleImageView profileImage;
-        //ImageView onlineIcon;
+        ImageView onlineIcon;
 
 
         public ContactsViewHolder(@NonNull View itemView)
@@ -167,7 +167,7 @@ public class ContactsFragment extends Fragment {
             userName = itemView.findViewById(R.id.user_profile_name);
             userStatus = itemView.findViewById(R.id.user_status);
             profileImage = itemView.findViewById(R.id.users_profile_image);
-            //onlineIcon = (ImageView) itemView.findViewById(R.id.user_online_status);
+            onlineIcon = (ImageView) itemView.findViewById(R.id.user_online_status);
         }
     }
 }

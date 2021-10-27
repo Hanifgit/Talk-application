@@ -54,15 +54,15 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void CreateNewAccount() {
-        String resEmail = userEmail.getText().toString();
-        String resPassword = UserPassword.getText().toString();
+        String resEmail = userEmail.getText().toString().trim();
+        String resPassword = UserPassword.getText().toString().trim();
         if(TextUtils.isEmpty(resEmail)){
             userEmail.setError("Email is required");
-            Toast.makeText(this, "Please enter email..", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Please enter email..", Toast.LENGTH_SHORT).show();
         }
         if(TextUtils.isEmpty(resPassword)){
             UserPassword.setError("Password is required");
-            Toast.makeText(this, "Please enter password..", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Please enter password..", Toast.LENGTH_SHORT).show();
         }else{
             loadingBar.setTitle("Creating a new account");
             loadingBar.setMessage("Please Wait,while we are creating new account for you..");
@@ -76,11 +76,11 @@ public class RegisterActivity extends AppCompatActivity {
                             if(task.isSuccessful()){
                                 String currentUserID = mAuth.getCurrentUser().getUid();
                                 RootRef.child("Users").child(currentUserID).setValue("");
+                                //sendUserMainActivity();
                                 SendUserToSettingActivity();
                                 //sendUserToLoginActivity();
                                 Toast.makeText(RegisterActivity.this,"Account Create Successfully..",Toast.LENGTH_LONG);
                                 loadingBar.dismiss();
-
                             }else{
                                 Toast.makeText(RegisterActivity.this,"Account Create Unsuccessfully..",Toast.LENGTH_LONG);
                                 loadingBar.dismiss();
@@ -115,6 +115,13 @@ public class RegisterActivity extends AppCompatActivity {
     {
         Intent mainIntent = new Intent(RegisterActivity.this, SettingsActivity.class);
         startActivity(mainIntent);
+        finish();
+    }
+
+    private void SendUserToVerificationEmailActivity()
+    {
+        Intent VerificationEmailIntent = new Intent(RegisterActivity.this, VerificationEmailActivity.class);
+        startActivity(VerificationEmailIntent);
         finish();
     }
 }

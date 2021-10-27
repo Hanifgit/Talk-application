@@ -112,8 +112,8 @@ public class ChatActivity extends AppCompatActivity {
         actionBar.setCustomView(actionBarView);
 
         userName = findViewById(R.id.custom_profile_name);
-        userLastSeen = (TextView) findViewById(R.id.custom_user_last_seen);
-        userImage = (CircleImageView) findViewById(R.id.custom_profile_image);
+        userLastSeen = findViewById(R.id.custom_user_last_seen);
+        userImage = findViewById(R.id.custom_profile_image);
 
         SendMessageButton = (ImageButton) findViewById(R.id.send_message_btn);
         //SendFilesButton = (ImageButton) findViewById(R.id.send_files_btn);
@@ -152,11 +152,11 @@ public class ChatActivity extends AppCompatActivity {
 
                             if (state.equals("online"))
                             {
-                               userLastSeen.setText("online");
+                               userLastSeen.setText("Active");
                             }
                             else if (state.equals("offline"))
                             {
-                               userLastSeen.setText("Active " + date + " " + time);
+                               userLastSeen.setText(date + " " + time);
                             }
                         }
                         else

@@ -45,16 +45,15 @@ public class GroupChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_chat);
 
-
         currentGroupName = getIntent().getExtras().get("groupName").toString();
         Toast.makeText(GroupChatActivity.this, currentGroupName, Toast.LENGTH_SHORT).show();
+
+        InitializeFields();
 
         mAuth = FirebaseAuth.getInstance();
         currentUserID = mAuth.getCurrentUser().getUid();
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
         GroupNameRef = FirebaseDatabase.getInstance().getReference().child("Groups").child(currentUserID).child(currentGroupName);
-
-        InitializeFields();
 
         GetUserInfo();
 
@@ -122,12 +121,6 @@ public class GroupChatActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(currentGroupName);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            getParent().onBackPressed();
-        }
-       });
 
         SendMessageButton = (ImageButton) findViewById(R.id.send_message_button);
         userMessageInput = (EditText) findViewById(R.id.input_group_message);

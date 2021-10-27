@@ -95,6 +95,7 @@ public class LoginActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if(task.isSuccessful()){
                                 sendUserMainActivity();
+                                ToastMessage("Account logged Successfully.");
                                 loadingBar.dismiss();
                             }else{
                                 ToastMessage("Account logged Unsuccessfully.");
@@ -119,6 +120,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void sendUserToPhoneLoginActivity() {
         Intent phoneLoginIntent = new Intent(LoginActivity.this,PhoneLoginActivity.class);
+        phoneLoginIntent.putExtra("login","Login");
         startActivity(phoneLoginIntent);
     }
 

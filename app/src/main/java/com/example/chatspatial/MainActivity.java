@@ -1,6 +1,7 @@
 package com.example.chatspatial;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -9,14 +10,18 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,10 +31,18 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity {
     private Toolbar mToolbar;
@@ -40,6 +53,12 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseUser currentUser;
     private DatabaseReference RootRef;
     private String currentUserID;
+    private static final int GalleryPick = 1;
+    private Uri ImageUri;
+    private CircleImageView groupImageField;
+    private StorageReference GroupProfileImagesRef;
+    private String groupName;
+    private boolean emailAddressChecked;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +81,8 @@ public class MainActivity extends AppCompatActivity {
         RootRef = FirebaseDatabase.getInstance().getReference();
         currentUserID = mAuth.getCurrentUser().getUid();
 
+        GroupProfileImagesRef = FirebaseStorage.getInstance().getReference().child("Group Images");
+
         mToolbar = (Toolbar) findViewById(R.id.main_page_toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("Chat Spatial");
@@ -77,6 +98,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+//        emailAddressChecked =  mAuth.getCurrentUser().isEmailVerified();
+//        if(!emailAddressChecked){
+//            SendUserToVerificationEmailActivity();
+//        }
         if(currentUser == null){
             sendUserLoginActivity();
         }else {
@@ -189,14 +214,15 @@ public class MainActivity extends AppCompatActivity {
         builder.setTitle("Enter Group Name :");
 
         final EditText groupNameField = new EditText(MainActivity.this);
-        groupNameField.setHint("e.g Coding Cafe");
+
+        groupNameField.setHint("   e.g Chat Spatial");
         builder.setView(groupNameField);
 
         builder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i)
             {
-                String groupName = groupNameField.getText().toString();
+                groupName = groupNameField.getText().toString();
 
                 if (TextUtils.isEmpty(groupName))
                 {
@@ -205,6 +231,7 @@ public class MainActivity extends AppCompatActivity {
                 else
                 {
                     CreateNewGroup(groupName);
+                    RequestNewGroupImage(groupName);
                 }
             }
         });
@@ -221,9 +248,56 @@ public class MainActivity extends AppCompatActivity {
         builder.show();
     }
 
+    private void RequestNewGroupImage(String groupName)
+    {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialog);
+        builder.setIcon(R.drawable.user).setTitle("Add"+groupName+"Image\n");
+
+        groupImageField = new CircleImageView(MainActivity.this);
+        groupImageField.setImageResource(R.drawable.take_picture);
+        groupImageField.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent galleryIntent = new Intent();
+                galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+                galleryIntent.setType("image/*");
+                startActivityForResult(galleryIntent, GalleryPick);
+            }
+        });
+
+        builder.setView(groupImageField);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i)
+            {
+                if (TextUtils.isEmpty((CharSequence) groupImageField.getDrawable()))
+                {
+                    Toast.makeText(MainActivity.this, "Please choice group image...", Toast.LENGTH_SHORT).show();
+                }else{
+                    Intent loginIntent = new Intent(MainActivity.this,LoginActivity.class);
+                    startActivity(loginIntent);
+                    dialogInterface.cancel();
+                }
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i)
+            {
+                RootRef.child("Groups").child(currentUserID).child(groupName).removeValue();
+                dialogInterface.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
     private void CreateNewGroup(final String groupName)
     {
-        RootRef.child(currentUserID).child("Groups").child(groupName).setValue("")
+        RootRef.child("Groups").child(currentUserID).child(groupName).setValue("")
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task)
@@ -234,6 +308,53 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode==GalleryPick  &&  resultCode==RESULT_OK  &&  data!=null)
+        {
+            ImageUri = data.getData();
+
+            CropImage.activity()
+                    .setGuidelines(CropImageView.Guidelines.ON)
+                    .setAspectRatio(1, 1)
+                    .start(this);
+        }
+
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE)
+        {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+
+            if (resultCode == RESULT_OK)
+            {
+
+                Uri resultUri = result.getUri();
+
+                Picasso.get().load(resultUri).placeholder(R.drawable.profile_image).fit().into(groupImageField);
+
+                StorageReference filePath = GroupProfileImagesRef.child(currentUserID + ".jpg");
+
+                filePath.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                Image image = new Image(uri.toString());
+                                String imageId = RootRef.push().getKey();
+                                //RootRef.child("Groups").child(currentUserID).child(groupName).child("image").setValue(image.getImage());
+                                Toast.makeText(MainActivity.this, "Group Image uploaded Successfully...", Toast.LENGTH_SHORT).show();
+
+                            }
+                        });
+                    }
+                });
+            }
+        }
     }
 
     private void updateUserStatus(String state)
@@ -254,8 +375,14 @@ public class MainActivity extends AppCompatActivity {
         onlineStateMap.put("state", state);
 
         RootRef.child("Users").child(currentUserID).child("userState")
-                .updateChildren(onlineStateMap);
+                    .updateChildren(onlineStateMap);
+    }
 
+    private void SendUserToVerificationEmailActivity()
+    {
+        Intent VerificationEmailIntent = new Intent(MainActivity.this, VerificationEmailActivity.class);
+        startActivity(VerificationEmailIntent);
+        finish();
     }
 
 }

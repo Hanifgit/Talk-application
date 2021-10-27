@@ -19,6 +19,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.concurrent.TimeUnit;
 
@@ -29,10 +31,11 @@ public class PhoneLoginActivity extends AppCompatActivity {
 
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks callbacks;
     private FirebaseAuth mAuth;
+    private DatabaseReference RootRef;
 
     private ProgressDialog loadingBar;
 
-    private String mVerificationId;
+    private String mVerificationId,login = "";
     private PhoneAuthProvider.ForceResendingToken mResendToken;
 
 
@@ -44,6 +47,7 @@ public class PhoneLoginActivity extends AppCompatActivity {
 
 
         mAuth = FirebaseAuth.getInstance();
+        login = getIntent().getExtras().get("login").toString();
 
 
         SendVerificationCodeButton = (Button) findViewById(R.id.send_ver_code_button);
@@ -51,6 +55,7 @@ public class PhoneLoginActivity extends AppCompatActivity {
         InputPhoneNumber = (EditText) findViewById(R.id.phone_nnumber_input);
         InputVerificationCode = (EditText) findViewById(R.id.verification_code_input);
         loadingBar = new ProgressDialog(this);
+        RootRef = FirebaseDatabase.getInstance().getReference();
 
 
         SendVerificationCodeButton.setOnClickListener(new View.OnClickListener() {
@@ -147,9 +152,6 @@ public class PhoneLoginActivity extends AppCompatActivity {
         };
     }
 
-
-
-
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -157,10 +159,13 @@ public class PhoneLoginActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful())
                         {
-                            loadingBar.dismiss();
-                            Toast.makeText(PhoneLoginActivity.this, "Congratulations, you're logged in successfully...", Toast.LENGTH_SHORT).show();
-                            SendUserToSettingActivity();
+                            if (login.equals("Login")){
+
+                            }
+                            SendUserToRegisterActivity();
                             //SendUserToMainActivity();
+                            Toast.makeText(PhoneLoginActivity.this, "Congratulations, you're logged in successfully...", Toast.LENGTH_SHORT).show();
+                            loadingBar.dismiss();
                         }
                         else
                         {
@@ -170,8 +175,6 @@ public class PhoneLoginActivity extends AppCompatActivity {
                     }
                 });
     }
-
-
 
 
     private void SendUserToMainActivity()
@@ -185,6 +188,13 @@ public class PhoneLoginActivity extends AppCompatActivity {
     {
         Intent mainIntent = new Intent(PhoneLoginActivity.this, SettingsActivity.class);
         startActivity(mainIntent);
+        finish();
+    }
+
+    private void SendUserToRegisterActivity()
+    {
+        Intent RegIntent = new Intent(PhoneLoginActivity.this, RegisterActivity.class);
+        startActivity(RegIntent);
         finish();
     }
 

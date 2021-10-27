@@ -20,7 +20,8 @@ public class AccountActivity extends AppCompatActivity {
         NewAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendUserToRegisterActivity();
+                //sendUserToRegisterActivity();
+                sendUserToPhoneLoginActivity();
             }
         });
 
@@ -28,6 +29,7 @@ public class AccountActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 sendUserToLoginActivity();
+                //sendUserToPhoneLoginActivity();
             }
         });
     }
@@ -40,6 +42,12 @@ public class AccountActivity extends AppCompatActivity {
 
     private void sendUserToLoginActivity() {
         Intent loginIntent = new Intent(AccountActivity.this,LoginActivity.class);
+        //loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(loginIntent);
+    }
+
+    private void sendUserToPhoneLoginActivity() {
+        Intent loginIntent = new Intent(AccountActivity.this,PhoneLoginActivity.class);
         //loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(loginIntent);
     }

@@ -62,12 +62,29 @@
         android:textSize="24sp"
         android:textColor="@android:color/background_light"
         android:background="@drawable/buttons"/>
+
+    <Button
+        android:id="@+id/phone_register_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/register_button"
+        android:padding="4dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="19dp"
+        android:layout_marginRight="19dp"
+        android:drawableStart="@drawable/phone"
+        android:text="Continue with Phone"
+        android:textAllCaps="false"
+        android:textSize="20sp"
+        android:textColor="@android:color/background_light"
+        android:background="#03A9F4"
+        android:drawableLeft="@drawable/phone" />
     <TextView
         android:id="@+id/already_have_account"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/register_button"
+        android:layout_below="@id/phone_register_button"
         android:text="Already have an account ?"
         android:layout_marginTop="2dp"
         android:layout_marginLeft="15dp"

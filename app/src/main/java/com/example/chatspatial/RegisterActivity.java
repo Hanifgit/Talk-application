@@ -23,7 +23,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class RegisterActivity extends AppCompatActivity {
     private FirebaseUser currentUser;
-    private Button RegisterButton;
+    private Button RegisterButton,PhoneRegisterButton;
     private EditText userEmail,UserPassword;
     private TextView AlreadyHaveAccount;
     private FirebaseAuth mAuth;
@@ -37,6 +37,13 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         InitializeFields();
+
+        PhoneRegisterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendUserToPhoneRegisterActivity();
+            }
+        });
 
         AlreadyHaveAccount.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,6 +99,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void InitializeFields() {
         RegisterButton = findViewById(R.id.register_button);
+        PhoneRegisterButton = findViewById(R.id.phone_register_button);
         userEmail = findViewById(R.id.register_email);
         UserPassword = findViewById(R.id.register_password);
         AlreadyHaveAccount = findViewById(R.id.already_have_account);
@@ -124,4 +132,11 @@ public class RegisterActivity extends AppCompatActivity {
         startActivity(VerificationEmailIntent);
         finish();
     }
+
+    private void sendUserToPhoneRegisterActivity() {
+        Intent phoneRegisterIntent = new Intent(RegisterActivity.this,PhoneLoginActivity.class);
+        phoneRegisterIntent.putExtra("login","register");
+        startActivity(phoneRegisterIntent);
+    }
+
 }

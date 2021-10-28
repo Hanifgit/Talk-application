@@ -45,6 +45,16 @@
              />
 
         <ImageButton
+            android:id="@+id/send_files_btn"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="23dp"
+            android:src="@drawable/send_files"
+            android:layout_marginLeft="248dp"
+            android:background="@color/white"
+            />
+
+        <ImageButton
             android:id="@+id/send_message_btn"
             android:layout_width="70dp"
             android:layout_height="wrap_content"

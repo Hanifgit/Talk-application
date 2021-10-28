@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -46,6 +47,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity {
     private Toolbar mToolbar;
+    private FloatingActionButton fabBtn;
     private ViewPager myViewPager;
     private TabLayout myTabLayout;
     private TabsAccessorAdapter MyTabsAccessorAdapter;
@@ -73,9 +75,18 @@ public class MainActivity extends AppCompatActivity {
 
         myTabLayout = findViewById(R.id.main_tabs);
         myTabLayout.setupWithViewPager(myViewPager);
+
+        fabBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SendUserToSearchFriendsActivity();
+            }
+        });
     }
 
     private void InitializeFields() {
+        fabBtn = findViewById(R.id.fabID);
+
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
         RootRef = FirebaseDatabase.getInstance().getReference();
@@ -86,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
         mToolbar = (Toolbar) findViewById(R.id.main_page_toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("Chat Spatial");
+
 
         myViewPager = (ViewPager) findViewById(R.id.main_tabs_pager);
         MyTabsAccessorAdapter = new TabsAccessorAdapter(getSupportFragmentManager());
@@ -106,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
             sendUserLoginActivity();
         }else {
             updateUserStatus("online");
-            VerifyUserExistance();
+            //VerifyUserExistance();
         }
     }
 
@@ -159,6 +171,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void sendUserLoginActivity() {
         Intent loginIntent = new Intent(MainActivity.this,LoginActivity.class);
+        loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(loginIntent);
     }
 
@@ -204,6 +217,9 @@ public class MainActivity extends AppCompatActivity {
         }
         if(item.getItemId()== R.id.main_chat_request_option){
             SendUserToChatRequestsActivity();
+        }
+        if(item.getItemId()== R.id.main_searchIcon_option){
+            SendUserToSearchFriendsActivity();
         }
         return true;
     }
@@ -383,6 +399,11 @@ public class MainActivity extends AppCompatActivity {
         Intent VerificationEmailIntent = new Intent(MainActivity.this, VerificationEmailActivity.class);
         startActivity(VerificationEmailIntent);
         finish();
+    }
+    private void SendUserToSearchFriendsActivity()
+    {
+        Intent searchIntent = new Intent(MainActivity.this, SearchFriendsActivity.class);
+        startActivity(searchIntent);
     }
 
 }

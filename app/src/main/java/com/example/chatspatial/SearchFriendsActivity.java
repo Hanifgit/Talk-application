@@ -8,9 +8,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,35 +26,59 @@ import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class FindFriendsActivity extends AppCompatActivity {
+public class SearchFriendsActivity extends AppCompatActivity {
 
     private Toolbar mToolbar;
     private RecyclerView FindFriendsRecyclerList;
     private FirebaseAuth mAuth;
     private String currentUserID;
     private DatabaseReference UsersRef;
-
+    private EditText SearchFriends;
+    private String searchStr="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_find_friends);
+        setContentView(R.layout.activity_search_friends);
 
         mAuth = FirebaseAuth.getInstance();
         currentUserID = mAuth.getCurrentUser().getUid();
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
 
+        SearchFriends = findViewById(R.id.search_friend);
+        SearchFriends.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                if(SearchFriends.getText().toString().equals("")){
+                    Toast.makeText(SearchFriendsActivity.this, "Please Write", Toast.LENGTH_SHORT).show();
+                }else{
+                    searchStr = s.toString();
+                    onStart();
+                }
+            }
 
-        FindFriendsRecyclerList = findViewById(R.id.find_friends_recycler_list);
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+
+        FindFriendsRecyclerList = findViewById(R.id.search_friends_recycler_list);
         FindFriendsRecyclerList.setLayoutManager(new LinearLayoutManager(this));
 
 
-        mToolbar = findViewById(R.id.find_friends_toolbar);
+        mToolbar = findViewById(R.id.search_friends_toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setTitle("Find Friends");
+        getSupportActionBar().setTitle("");
     }
 
 
@@ -60,16 +87,24 @@ public class FindFriendsActivity extends AppCompatActivity {
     {
         super.onStart();
 
-        FirebaseRecyclerOptions<Contacts> options =
-                new FirebaseRecyclerOptions.Builder<Contacts>()
-                        .setQuery(UsersRef, Contacts.class)
-                        .build();
+        FirebaseRecyclerOptions<Contacts> options = null;
 
-        FirebaseRecyclerAdapter<Contacts,FindFriendViewHolder>adapter =
-                new FirebaseRecyclerAdapter<Contacts, FindFriendViewHolder>(options) {
+        if(searchStr.equals("")){
+            options = new FirebaseRecyclerOptions.Builder<Contacts>()
+                    .setQuery(UsersRef, Contacts.class)
+                    .build();
+        }else{
+            options = new FirebaseRecyclerOptions.Builder<Contacts>()
+                    .setQuery(UsersRef.orderByChild("name")
+                            .startAt(searchStr)
+                            .endAt(searchStr+"\uf8ff"), Contacts.class)
+                    .build();
+        }
+
+        FirebaseRecyclerAdapter<Contacts,SearchFriendViewHolder>adapter =
+                new FirebaseRecyclerAdapter<Contacts, SearchFriendViewHolder>(options) {
                     @Override
-                    protected void onBindViewHolder(@NonNull FindFriendViewHolder holder, int position, @NonNull Contacts model) {
-
+                    protected void onBindViewHolder(@NonNull SearchFriendViewHolder holder, int position, @NonNull Contacts model) {
                         holder.userName.setText(model.getName());
                         holder.userStatus.setText(model.getStatus());
                         Picasso.get().load(model.getImage()).placeholder(R.drawable.profile_image).into(holder.profileImage);
@@ -81,7 +116,7 @@ public class FindFriendsActivity extends AppCompatActivity {
                             {
                                 String visit_user_id = getRef(position).getKey();
 
-                                Intent profileIntent = new Intent(FindFriendsActivity.this, ProfileActivity.class);
+                                Intent profileIntent = new Intent(SearchFriendsActivity.this, ProfileActivity.class);
                                 profileIntent.putExtra("visit_user_id", visit_user_id);
                                 startActivity(profileIntent);
                             }
@@ -90,25 +125,24 @@ public class FindFriendsActivity extends AppCompatActivity {
 
                     @NonNull
                     @Override
-                    public FindFriendViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                    public SearchFriendViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
                         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.users_display_layout, parent, false);
-                        FindFriendViewHolder viewHolder = new FindFriendViewHolder(view);
+                        SearchFriendViewHolder viewHolder = new SearchFriendViewHolder(view);
                         return viewHolder;
                     }
                 };
-
         FindFriendsRecyclerList.setAdapter(adapter);
 
         adapter.startListening();
     }
 
-    public static class FindFriendViewHolder extends RecyclerView.ViewHolder
+    public static class SearchFriendViewHolder extends RecyclerView.ViewHolder
     {
         TextView userName, userStatus;
         CircleImageView profileImage;
 
 
-        public FindFriendViewHolder(@NonNull View itemView)
+        public SearchFriendViewHolder(@NonNull View itemView)
         {
             super(itemView);
 

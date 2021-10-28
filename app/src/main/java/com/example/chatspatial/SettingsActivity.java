@@ -42,7 +42,7 @@ public class SettingsActivity extends AppCompatActivity
     private EditText userName, userStatus,userPhone;
     private CircleImageView userProfileImage;
 
-    private String currentUserID,userEmail;
+    private String currentUserID,userEmail,userPassword;
     private FirebaseAuth mAuth;
     private DatabaseReference RootRef;
     private Uri ImageUri;
@@ -68,13 +68,14 @@ public class SettingsActivity extends AppCompatActivity
         UserProfileImagesRef = FirebaseStorage.getInstance().getReference().child("Profile Images");
 
         userEmail = mAuth.getCurrentUser().getEmail();
-
+       // userPassword = getIntent().getExtras().get("user_password").toString();
 
         InitializeFields();
 
 
         userName.setVisibility(View.INVISIBLE);
 
+        RetrieveUserInfo();
 
         UpdateAccountSettings.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,9 +84,6 @@ public class SettingsActivity extends AppCompatActivity
                 UpdateSettings();
             }
         });
-
-
-        RetrieveUserInfo();
 
 
         userProfileImage.setOnClickListener(new View.OnClickListener() {
@@ -195,6 +193,8 @@ public class SettingsActivity extends AppCompatActivity
             profileMap.put("status", setStatus);
             profileMap.put("phone", setPhone);
             profileMap.put("email", userEmail);
+            //Picasso.get().load(resultUri).placeholder(R.drawable.profile_image).into(userProfileImage)
+           // profileMap.put("password",userPassword);
             RootRef.child("Users").child(currentUserID).updateChildren(profileMap)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
@@ -214,7 +214,6 @@ public class SettingsActivity extends AppCompatActivity
                     });
         }
     }
-
 
     private void RetrieveUserInfo()
     {

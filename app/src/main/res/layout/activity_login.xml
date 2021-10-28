@@ -130,6 +130,7 @@
                 android:textSize="20sp"
                 android:textColor="@android:color/background_light"
                 android:background="#E91E63"
+                android:visibility="invisible"
                 android:drawableLeft="@drawable/google_log" />
         </RelativeLayout>
     </ScrollView>

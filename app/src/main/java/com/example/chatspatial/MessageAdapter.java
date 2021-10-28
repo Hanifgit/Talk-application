@@ -38,7 +38,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
         public class MessageViewHolder extends RecyclerView.ViewHolder
         {
-            public TextView senderMessageText, receiverMessageText;
+            public TextView senderMessageText, receiverMessageText,senderMessageTextDate,receiverMessageTextDate;
             public CircleImageView receiverProfileImage;
             public ImageView messageSenderPicture, messageReceiverPicture;
 
@@ -52,6 +52,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                 receiverProfileImage = (CircleImageView) itemView.findViewById(R.id.message_profile_image);
                 messageReceiverPicture = itemView.findViewById(R.id.message_receiver_image_view);
                 messageSenderPicture = itemView.findViewById(R.id.message_sender_image_view);
+                senderMessageTextDate = itemView.findViewById(R.id.sender_messsage_text_date);
+                receiverMessageTextDate = itemView.findViewById(R.id.receiver_message_text_date);
             }
         }
 
@@ -107,6 +109,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             messageViewHolder.senderMessageText.setVisibility(View.GONE);
             messageViewHolder.messageSenderPicture.setVisibility(View.GONE);
             messageViewHolder.messageReceiverPicture.setVisibility(View.GONE);
+            messageViewHolder.receiverMessageTextDate.setVisibility(View.GONE);
+            messageViewHolder.senderMessageTextDate.setVisibility(View.GONE);
 
 
             if (fromMessageType.equals("text"))
@@ -114,21 +118,23 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                 if (fromUserID.equals(messageSenderId))
                 {
                     messageViewHolder.senderMessageText.setVisibility(View.VISIBLE);
+                    messageViewHolder.senderMessageTextDate.setVisibility(View.VISIBLE);
 
                     messageViewHolder.senderMessageText.setBackgroundResource(R.drawable.sender_messages_layout);
                     messageViewHolder.senderMessageText.setTextColor(Color.BLACK);
                     messageViewHolder.senderMessageText.setText(messages.getMessage());
-                    messageViewHolder.senderMessageText.setText(messages.getMessage() + "\n \n" + messages.getTime() + " - " + messages.getDate());
+                    messageViewHolder.senderMessageTextDate.setText(messages.getTime() + " - " + messages.getDate());
                 }
                 else
                 {
                     messageViewHolder.receiverProfileImage.setVisibility(View.VISIBLE);
                     messageViewHolder.receiverMessageText.setVisibility(View.VISIBLE);
+                    messageViewHolder.receiverMessageTextDate.setVisibility(View.VISIBLE);
 
                     messageViewHolder.receiverMessageText.setBackgroundResource(R.drawable.receiver_messages_layout);
                     messageViewHolder.receiverMessageText.setTextColor(Color.BLACK);
                     messageViewHolder.receiverMessageText.setText(messages.getMessage());
-                    messageViewHolder.receiverMessageText.setText(messages.getMessage() + "\n \n" + messages.getTime() + " - " + messages.getDate());
+                    messageViewHolder.receiverMessageTextDate.setText(messages.getTime() + " - " + messages.getDate());
                 }
             }
         }

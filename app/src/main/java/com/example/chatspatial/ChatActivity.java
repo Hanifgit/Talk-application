@@ -95,6 +95,13 @@ public class ChatActivity extends AppCompatActivity {
 
 
         DisplayLastSeen();
+
+        SendFilesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 
     private void IntializeControllers()
@@ -116,7 +123,7 @@ public class ChatActivity extends AppCompatActivity {
         userImage = findViewById(R.id.custom_profile_image);
 
         SendMessageButton = (ImageButton) findViewById(R.id.send_message_btn);
-        //SendFilesButton = (ImageButton) findViewById(R.id.send_files_btn);
+        SendFilesButton = (ImageButton) findViewById(R.id.send_files_btn);
         MessageInputText = (EditText) findViewById(R.id.input_message);
 
         messageAdapter = new MessageAdapter(messagesList);
@@ -152,7 +159,7 @@ public class ChatActivity extends AppCompatActivity {
 
                             if (state.equals("online"))
                             {
-                               userLastSeen.setText("Active");
+                               userLastSeen.setText("Active Now");
                             }
                             else if (state.equals("offline"))
                             {

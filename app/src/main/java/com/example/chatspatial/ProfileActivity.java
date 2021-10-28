@@ -3,6 +3,7 @@ package com.example.chatspatial;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -24,7 +25,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    private String receiverUserID, senderUserID, Current_State;
+    private String receiverUserID, senderUserID, Current_State,userImage,userName;
 
     private CircleImageView userProfileImage;
     private TextView userProfileName, userProfileStatus;
@@ -71,8 +72,8 @@ public class ProfileActivity extends AppCompatActivity {
             {
                 if ((dataSnapshot.exists())  &&  (dataSnapshot.hasChild("image")))
                 {
-                    String userImage = dataSnapshot.child("image").getValue().toString();
-                    String userName = dataSnapshot.child("name").getValue().toString();
+                    userImage = dataSnapshot.child("image").getValue().toString();
+                    userName = dataSnapshot.child("name").getValue().toString();
                     String userstatus = dataSnapshot.child("status").getValue().toString();
 
                     Picasso.get().load(userImage).placeholder(R.drawable.profile_image).into(userProfileImage);
@@ -145,7 +146,20 @@ public class ProfileActivity extends AppCompatActivity {
                                             if (dataSnapshot.hasChild(receiverUserID))
                                             {
                                                 Current_State = "friends";
-                                                SendMessageRequestButton.setText("Remove this Contact");
+                                                SendMessageRequestButton.setText("Remove this contact");
+                                                DeclineMessageRequestButton.setText("Chat this contact");
+                                                DeclineMessageRequestButton.setEnabled(true);
+                                                DeclineMessageRequestButton.setVisibility(View.VISIBLE);
+                                                DeclineMessageRequestButton.setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View v) {
+                                                        Intent chatIntent = new Intent(ProfileActivity.this, ChatActivity.class);
+                                                        chatIntent.putExtra("visit_user_id", senderUserID);
+                                                        chatIntent.putExtra("visit_user_name", userName);
+                                                        chatIntent.putExtra("visit_image", userImage);
+                                                        startActivity(chatIntent);
+                                                    }
+                                                });
                                             }
                                         }
 

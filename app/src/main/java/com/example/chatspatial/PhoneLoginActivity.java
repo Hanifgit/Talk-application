@@ -19,15 +19,18 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.concurrent.TimeUnit;
 
 public class PhoneLoginActivity extends AppCompatActivity {
 
     private Button SendVerificationCodeButton, VerifyButton;
-    private EditText InputPhoneNumber, InputVerificationCode;
+    private EditText InputPhoneNumber, InputVerificationCode,InputPassword;
 
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks callbacks;
     private FirebaseAuth mAuth;
@@ -35,7 +38,7 @@ public class PhoneLoginActivity extends AppCompatActivity {
 
     private ProgressDialog loadingBar;
 
-    private String mVerificationId,login = "";
+    private String mVerificationId,login,password,currentUserID;
     private PhoneAuthProvider.ForceResendingToken mResendToken;
 
 
@@ -45,17 +48,20 @@ public class PhoneLoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_phone_login);
 
-
-        mAuth = FirebaseAuth.getInstance();
         login = getIntent().getExtras().get("login").toString();
-
+//        if (login.equals("register")){
+//            SendVerificationCodeButton.setText("Create Account");
+//        }
 
         SendVerificationCodeButton = (Button) findViewById(R.id.send_ver_code_button);
         VerifyButton = (Button) findViewById(R.id.verify_button);
-        InputPhoneNumber = (EditText) findViewById(R.id.phone_nnumber_input);
+        InputPhoneNumber = (EditText) findViewById(R.id.phone_number_input);
         InputVerificationCode = (EditText) findViewById(R.id.verification_code_input);
+        InputPassword = findViewById(R.id.password_input);
         loadingBar = new ProgressDialog(this);
-        RootRef = FirebaseDatabase.getInstance().getReference();
+        mAuth = FirebaseAuth.getInstance();
+        //currentUserID = mAuth.getCurrentUser().getUid();
+        //RootRef = FirebaseDatabase.getInstance().getReference();
 
 
         SendVerificationCodeButton.setOnClickListener(new View.OnClickListener() {
@@ -66,6 +72,7 @@ public class PhoneLoginActivity extends AppCompatActivity {
 
                 if (TextUtils.isEmpty(phoneNumber))
                 {
+                    InputPhoneNumber.setError("required phone number");
                     Toast.makeText(PhoneLoginActivity.this, "Please enter your phone number first...", Toast.LENGTH_SHORT).show();
                 }
                 else
@@ -92,6 +99,7 @@ public class PhoneLoginActivity extends AppCompatActivity {
             {
                 SendVerificationCodeButton.setVisibility(View.INVISIBLE);
                 InputPhoneNumber.setVisibility(View.INVISIBLE);
+                //InputPassword.setVisibility(View.INVISIBLE);
 
                 String verificationCode = InputVerificationCode.getText().toString();
 
@@ -128,6 +136,7 @@ public class PhoneLoginActivity extends AppCompatActivity {
 
                 SendVerificationCodeButton.setVisibility(View.VISIBLE);
                 InputPhoneNumber.setVisibility(View.VISIBLE);
+                //InputPassword.setVisibility(View.VISIBLE);
 
                 VerifyButton.setVisibility(View.INVISIBLE);
                 InputVerificationCode.setVisibility(View.INVISIBLE);
@@ -145,6 +154,7 @@ public class PhoneLoginActivity extends AppCompatActivity {
 
                 SendVerificationCodeButton.setVisibility(View.INVISIBLE);
                 InputPhoneNumber.setVisibility(View.INVISIBLE);
+                //InputPassword.setVisibility(View.INVISIBLE);
 
                 VerifyButton.setVisibility(View.VISIBLE);
                 InputVerificationCode.setVisibility(View.VISIBLE);
@@ -160,9 +170,10 @@ public class PhoneLoginActivity extends AppCompatActivity {
                         if (task.isSuccessful())
                         {
                             if (login.equals("Login")){
-
+                                SendUserToMainActivity();
+                            }else{
+                                SendUserToSettingActivity();
                             }
-                            SendUserToRegisterActivity();
                             //SendUserToMainActivity();
                             Toast.makeText(PhoneLoginActivity.this, "Congratulations, you're logged in successfully...", Toast.LENGTH_SHORT).show();
                             loadingBar.dismiss();
@@ -186,8 +197,9 @@ public class PhoneLoginActivity extends AppCompatActivity {
 
     private void SendUserToSettingActivity()
     {
-        Intent mainIntent = new Intent(PhoneLoginActivity.this, SettingsActivity.class);
-        startActivity(mainIntent);
+        Intent settingIntent = new Intent(PhoneLoginActivity.this, SettingsActivity.class);
+        //settingIntent.putExtra("user_password",password);
+        startActivity(settingIntent);
         finish();
     }
 

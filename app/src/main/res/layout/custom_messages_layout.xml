@@ -29,6 +29,20 @@
         android:textStyle="bold"
         android:textColor="@android:color/black"
         android:layout_toRightOf="@+id/message_profile_image" />
+    <TextView
+        android:id="@+id/receiver_message_text_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="10dp"
+        android:layout_below="@+id/receiver_message_text"
+        android:layout_toEndOf="@+id/message_profile_image"
+        android:text="receiver messages here"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        android:textColor="#615A5A"
+        android:layout_toRightOf="@+id/message_profile_image" />
 
 
     <ImageView
@@ -65,6 +79,19 @@
         android:padding="10dp"
         android:textStyle="bold"
         android:textColor="@android:color/black"
+        android:layout_alignParentRight="true" />
+    <TextView
+        android:id="@+id/sender_messsage_text_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="10dp"
+        android:text="sender messages"
+        android:textSize="10sp"
+        android:layout_below="@id/sender_messsage_text"
+        android:textStyle="bold"
+        android:textColor="#615A5A"
         android:layout_alignParentRight="true" />
 
 </RelativeLayout>

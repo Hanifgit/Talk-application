@@ -20,8 +20,8 @@ public class AccountActivity extends AppCompatActivity {
         NewAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //sendUserToRegisterActivity();
-                sendUserToPhoneLoginActivity();
+                sendUserToRegisterActivity();
+                //sendUserToPhoneLoginActivity();
             }
         });
 

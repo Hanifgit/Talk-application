@@ -1,5 +1,6 @@
 package com.example.chatspatial;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -132,6 +133,17 @@ public class ContactsFragment extends Fragment {
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
 
+                    }
+                });
+
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String visit_user_id = getRef(position).getKey();
+
+                        Intent profileIntent = new Intent(getContext(), ProfileActivity.class);
+                        profileIntent.putExtra("visit_user_id", visit_user_id);
+                        startActivity(profileIntent);
                     }
                 });
             }

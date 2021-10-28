@@ -1,7 +1,10 @@
 package com.example.chatspatial;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 public class Contacts {
     public String name, status, image;
+    private FirebaseAuth mAuth;
 
     public Contacts()
     {

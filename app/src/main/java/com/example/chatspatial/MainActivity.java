@@ -288,14 +288,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialogInterface, int i)
             {
-                if (TextUtils.isEmpty((CharSequence) groupImageField.getDrawable()))
-                {
-                    Toast.makeText(MainActivity.this, "Please choice group image...", Toast.LENGTH_SHORT).show();
-                }else{
-                    Intent loginIntent = new Intent(MainActivity.this,LoginActivity.class);
-                    startActivity(loginIntent);
-                    dialogInterface.cancel();
-                }
+                Toast.makeText(MainActivity.this, "Group Create", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -304,6 +297,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialogInterface, int i)
             {
                 RootRef.child("Groups").child(currentUserID).child(groupName).removeValue();
+                RootRef.child("Group Messages").child(groupName).removeValue();
                 dialogInterface.cancel();
             }
         });
@@ -313,13 +307,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void CreateNewGroup(final String groupName)
     {
-        RootRef.child("Groups").child(currentUserID).child(groupName).setValue("")
+        RootRef.child("Groups").child(currentUserID).child(groupName).child("groupName").setValue(groupName)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task)
                     {
                         if (task.isSuccessful())
                         {
+                            RootRef.child("Group Messages").child(groupName).setValue("");
                             Toast.makeText(MainActivity.this, groupName + " group is Created Successfully...", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -362,7 +357,7 @@ public class MainActivity extends AppCompatActivity {
                             public void onSuccess(Uri uri) {
                                 Image image = new Image(uri.toString());
                                 String imageId = RootRef.push().getKey();
-                                //RootRef.child("Groups").child(currentUserID).child(groupName).child("image").setValue(image.getImage());
+                                RootRef.child("Groups").child(currentUserID).child(groupName).child("image").setValue(image.getImage());
                                 Toast.makeText(MainActivity.this, "Group Image uploaded Successfully...", Toast.LENGTH_SHORT).show();
 
                             }

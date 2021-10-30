@@ -1,21 +1,23 @@
 package com.example.chatspatial;
 
-import android.content.Intent;
-import android.os.Bundle;
-
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -26,30 +28,35 @@ import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ContactsFragment extends Fragment {
+public class FriendsActivity extends AppCompatActivity {
 
-    private View ContactsView;
     private RecyclerView myContactsList;
+    private FloatingActionButton fabBtn;
 
-    private DatabaseReference ContacsRef, UsersRef;
+    private DatabaseReference ContacsRef, UsersRef,RootRef;
     private FirebaseAuth mAuth;
     private String currentUserID;
-
-
-    public ContactsFragment() {
-        // Required empty public constructor
-    }
-
+    private boolean IsSelect = true;
+    private String groupName;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        ContactsView = inflater.inflate(R.layout.fragment_contacts, container, false);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_friends);
 
+        myContactsList = findViewById(R.id.friends_list);
+        myContactsList.setLayoutManager(new LinearLayoutManager(this));
 
-        myContactsList = (RecyclerView) ContactsView.findViewById(R.id.contacts_list);
-        myContactsList.setLayoutManager(new LinearLayoutManager(getContext()));
+        fabBtn = findViewById(R.id.fabID);
+        fabBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent groupIntent = new Intent(FriendsActivity.this, GroupChatActivity.class);
+                startActivity(groupIntent);
+            }
+        });
+
+        groupName = getIntent().getExtras().get("groupName").toString();
 
 
         mAuth = FirebaseAuth.getInstance();
@@ -58,11 +65,8 @@ public class ContactsFragment extends Fragment {
 
         ContacsRef = FirebaseDatabase.getInstance().getReference().child("Contacts").child(currentUserID);
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
-
-
-        return ContactsView;
+        RootRef = FirebaseDatabase.getInstance().getReference();
     }
-
 
     @Override
     public void onStart()
@@ -93,21 +97,7 @@ public class ContactsFragment extends Fragment {
                                 String state = dataSnapshot.child("userState").child("state").getValue().toString();
                                 String date = dataSnapshot.child("userState").child("date").getValue().toString();
                                 String time = dataSnapshot.child("userState").child("time").getValue().toString();
-
-                                if (state.equals("online"))
-                                {
-                                    holder.onlineIcon.setVisibility(View.VISIBLE);
-                                }
-                                else if (state.equals("offline"))
-                                {
-                                    holder.onlineIcon.setVisibility(View.INVISIBLE);
-                                }
                             }
-                            else
-                            {
-                                holder.onlineIcon.setVisibility(View.INVISIBLE);
-                            }
-
 
                             if (dataSnapshot.hasChild("image"))
                             {
@@ -127,6 +117,23 @@ public class ContactsFragment extends Fragment {
                                 holder.userName.setText(profileName);
                                 holder.userStatus.setText(profileStatus);
                             }
+//                            RootRef.child("Groups").child(getRef(position).getKey()).child(groupName)
+//                                    .addValueEventListener(new ValueEventListener() {
+//                                        @Override
+//                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                                            String value = dataSnapshot.child("select").getValue().toString();
+//                                            if(value.equals("true")){
+//                                                holder.userName.setTextColor(Color.rgb(60, 179, 113));
+//                                                holder.userStatus.setTextColor(Color.rgb(60, 179, 113));
+//                                                holder.profileImage.setBorderColor(Color.rgb(60, 179, 113));
+//                                            }
+//                                        }
+//
+//                                        @Override
+//                                        public void onCancelled(@NonNull DatabaseError error) {
+//
+//                                        }
+//                                    });
                         }
                     }
 
@@ -140,10 +147,27 @@ public class ContactsFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         String visit_user_id = getRef(position).getKey();
+                        if(IsSelect){
+                            holder.userName.setTextColor(Color.rgb(60, 179, 113));
+                            holder.userStatus.setTextColor(Color.rgb(60, 179, 113));
+                            holder.profileImage.setBorderColor(Color.rgb(60, 179, 113));
+                            RootRef.child("Groups").child(visit_user_id).child(groupName).setValue("");
+                            //RootRef.child("Group Messages").child(groupName).child(visit_user_id).setValue("");
+                            Toast.makeText(FriendsActivity.this, "Add friends", Toast.LENGTH_SHORT).show();
+                            IsSelect = false;
+                        }else{
+                            holder.userName.setTextColor(Color.GRAY);
+                            holder.userStatus.setTextColor(Color.GRAY);
+                            holder.profileImage.setBorderColor(Color.GRAY);
+                            RootRef.child("Groups").child(visit_user_id).child(groupName).removeValue();
+                            //RootRef.child("Group Messages").child(groupName).child(visit_user_id).removeValue();
+                            Toast.makeText(FriendsActivity.this, "Remove Friends", Toast.LENGTH_SHORT).show();
+                            IsSelect = true;
+                        }
 
-                        Intent profileIntent = new Intent(getContext(), ProfileActivity.class);
-                        profileIntent.putExtra("visit_user_id", visit_user_id);
-                        startActivity(profileIntent);
+                        //Intent profileIntent = new Intent(FriendsActivity.this, ProfileActivity.class);
+                        //profileIntent.putExtra("visit_user_id", visit_user_id);
+                        //startActivity(profileIntent);
                     }
                 });
             }

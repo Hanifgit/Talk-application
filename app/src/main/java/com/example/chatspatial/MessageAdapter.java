@@ -34,8 +34,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             this.userMessagesList = userMessagesList;
         }
 
-
-
         public class MessageViewHolder extends RecyclerView.ViewHolder
         {
             public TextView senderMessageText, receiverMessageText,senderMessageTextDate,receiverMessageTextDate;
@@ -58,8 +56,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         }
 
 
-
-
         @NonNull
         @Override
         public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i)
@@ -71,8 +67,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
             return new MessageViewHolder(view);
         }
-
-
 
         @Override
         public void onBindViewHolder(@NonNull final MessageViewHolder messageViewHolder, int i)
@@ -134,7 +128,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                     messageViewHolder.receiverMessageText.setBackgroundResource(R.drawable.receiver_messages_layout);
                     messageViewHolder.receiverMessageText.setTextColor(Color.BLACK);
                     messageViewHolder.receiverMessageText.setText(messages.getMessage());
-                    messageViewHolder.receiverMessageTextDate.setText(messages.getTime() + " - " + messages.getDate());
+                    messageViewHolder.receiverMessageTextDate.setText(messages.getTime() + " - " + messages.getDate()+"\n");
                 }
             }
         }

@@ -13,8 +13,10 @@
         android:roundIcon="@drawable/app_name1"
         android:supportsRtl="true"
         android:theme="@style/Theme.ChatSpatial">
-        <activity android:name=".SearchFriendsActivity"
-            android:parentActivityName=".SearchFriendsActivity"/>
+        <activity android:name=".FriendsActivity"></activity>
+        <activity
+            android:name=".SearchFriendsActivity"
+            android:parentActivityName=".SearchFriendsActivity" />
         <activity android:name=".VerificationEmailActivity" />
         <activity android:name=".AccountActivity" />
         <activity android:name=".ResetPasswordActivity" />

@@ -13,6 +13,7 @@
         android:roundIcon="@drawable/app_name1"
         android:supportsRtl="true"
         android:theme="@style/Theme.ChatSpatial">
+        <activity android:name=".ImageViewerActivity"></activity>
         <activity android:name=".GroupMemberActivity" />
         <activity android:name=".CreateGroupActivity" />
         <activity android:name=".FriendsActivity" />

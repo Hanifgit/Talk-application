@@ -182,6 +182,8 @@ public class GroupChatActivity extends AppCompatActivity {
                                 messageInfoMap.put("time", currentTime);
                                 messageInfoMap.put("from",currentUserID);
                                 messageInfoMap.put("type",Checker);
+                                messageInfoMap.put("messageID",messagekEY);
+                                messageInfoMap.put("groupName",currentGroupName);
                                 GroupMessageKeyRef.updateChildren(messageInfoMap);
                                 loadingBar.dismiss();
 
@@ -236,6 +238,8 @@ public class GroupChatActivity extends AppCompatActivity {
                             messageInfoMap.put("time", currentTime);
                             messageInfoMap.put("type",Checker);
                             messageInfoMap.put("from",currentUserID);
+                            messageInfoMap.put("messageID",messagekEY);
+                            messageInfoMap.put("groupName",currentGroupName);
                             GroupMessageKeyRef.updateChildren(messageInfoMap);
 
                             GroupMessageKeyRef.updateChildren(messageInfoMap).addOnCompleteListener(new OnCompleteListener() {
@@ -428,6 +432,8 @@ public class GroupChatActivity extends AppCompatActivity {
             messageInfoMap.put("time", currentTime);
             messageInfoMap.put("from",currentUserID);
             messageInfoMap.put("type","text");
+            messageInfoMap.put("messageID",messagekEY);
+            messageInfoMap.put("groupName",currentGroupName);
             GroupMessageKeyRef.updateChildren(messageInfoMap);
         }
     }

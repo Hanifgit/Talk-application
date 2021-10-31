@@ -6,9 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".FriendsActivity">
 
+    <include
+        android:id="@+id/friends_toolbar"
+        layout="@layout/app_bar_layout">
+    </include>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/friends_list"
         android:layout_width="match_parent"
+        android:layout_below="@+id/friends_toolbar"
         android:layout_height="match_parent"
         android:layout_centerInParent="true" />
 

@@ -4,8 +4,11 @@
     <item
         android:id="@+id/main_addIcon_option"
         android:icon="@drawable/fab_add"
-        app:showAsAction="ifRoom"
-        android:title="Search">
+        android:title="Add/Remove People">
     </item>
-
+    <item
+        android:id="@+id/main_friendList_option"
+        android:icon="@drawable/fab_add"
+        android:title="See Group Member">
+    </item>
 </menu>

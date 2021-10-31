@@ -1,6 +1,8 @@
 package com.example.chatspatial;
 
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +38,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
         public class MessageViewHolder extends RecyclerView.ViewHolder
         {
-            public TextView senderMessageText, receiverMessageText,senderMessageTextDate,receiverMessageTextDate;
+            public TextView senderMessageText, receiverMessageText,senderMessageTextDate,receiverMessageTextDate,
+                    messageReceiverImageDate,messageSenderImageDate;
             public CircleImageView receiverProfileImage;
             public ImageView messageSenderPicture, messageReceiverPicture;
 
@@ -52,6 +55,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                 messageSenderPicture = itemView.findViewById(R.id.message_sender_image_view);
                 senderMessageTextDate = itemView.findViewById(R.id.sender_messsage_text_date);
                 receiverMessageTextDate = itemView.findViewById(R.id.receiver_message_text_date);
+                messageReceiverImageDate = itemView.findViewById(R.id.message_receiver_image_date);
+                messageSenderImageDate = itemView.findViewById(R.id.message_sender_image_date);
             }
         }
 
@@ -105,6 +110,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             messageViewHolder.messageReceiverPicture.setVisibility(View.GONE);
             messageViewHolder.receiverMessageTextDate.setVisibility(View.GONE);
             messageViewHolder.senderMessageTextDate.setVisibility(View.GONE);
+            messageViewHolder.messageReceiverImageDate.setVisibility(View.GONE);
+            messageViewHolder.messageSenderImageDate.setVisibility(View.GONE);
 
 
             if (fromMessageType.equals("text"))
@@ -117,7 +124,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                     messageViewHolder.senderMessageText.setBackgroundResource(R.drawable.sender_messages_layout);
                     messageViewHolder.senderMessageText.setTextColor(Color.BLACK);
                     messageViewHolder.senderMessageText.setText(messages.getMessage());
-                    messageViewHolder.senderMessageTextDate.setText(messages.getTime() + " - " + messages.getDate());
+                    messageViewHolder.senderMessageTextDate.setText(messages.getTime() + " - " + messages.getDate()+"\n");
                 }
                 else
                 {
@@ -129,6 +136,48 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                     messageViewHolder.receiverMessageText.setTextColor(Color.BLACK);
                     messageViewHolder.receiverMessageText.setText(messages.getMessage());
                     messageViewHolder.receiverMessageTextDate.setText(messages.getTime() + " - " + messages.getDate()+"\n");
+                }
+            }else if (fromMessageType.equals("image")){
+                if(fromUserID.equals(messageSenderId)){
+                    messageViewHolder.messageSenderPicture.setVisibility(View.VISIBLE);
+                    messageViewHolder.messageSenderImageDate.setVisibility(View.VISIBLE);
+                    messageViewHolder.messageSenderImageDate.setText(messages.getTime() + " - " + messages.getDate()+"\n");
+                    Picasso.get().load(messages.getMessage()).into(messageViewHolder.messageSenderPicture);
+                }else{
+                    messageViewHolder.receiverProfileImage.setVisibility(View.VISIBLE);
+                    messageViewHolder.messageReceiverPicture.setVisibility(View.VISIBLE);
+                    messageViewHolder.messageReceiverImageDate.setVisibility(View.VISIBLE);
+                    messageViewHolder.messageReceiverImageDate.setText(messages.getTime() + " - " + messages.getDate()+"\n");
+                    Picasso.get().load(messages.getMessage()).into(messageViewHolder.messageReceiverPicture);
+                }
+            }else{
+                if(fromUserID.equals(messageSenderId)){
+                    messageViewHolder.messageSenderPicture.setVisibility(View.VISIBLE);
+                    messageViewHolder.messageSenderPicture.setBackgroundResource(R.drawable.file);
+                    messageViewHolder.messageSenderImageDate.setVisibility(View.VISIBLE);
+                    messageViewHolder.messageSenderImageDate.setText(messages.getTime() + " - " + messages.getDate()+"\n");
+                    messageViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(userMessagesList.get(i).getMessage()));
+                            messageViewHolder.itemView.getContext().startActivity(intent);
+                        }
+                    });
+                    //Picasso.get().load(messages.getMessage()).into(messageViewHolder.messageSenderPicture);
+                }else{
+                    messageViewHolder.receiverProfileImage.setVisibility(View.VISIBLE);
+                    messageViewHolder.messageReceiverPicture.setVisibility(View.VISIBLE);
+                    messageViewHolder.messageReceiverPicture.setBackgroundResource(R.drawable.file);
+                    messageViewHolder.messageReceiverImageDate.setVisibility(View.VISIBLE);
+                    messageViewHolder.messageReceiverImageDate.setText(messages.getTime() + " - " + messages.getDate()+"\n");
+                    messageViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(userMessagesList.get(i).getMessage()));
+                            messageViewHolder.itemView.getContext().startActivity(intent);
+                        }
+                    });
+                    //Picasso.get().load(messages.getMessage()).into(messageViewHolder.messageReceiverPicture);
                 }
             }
         }

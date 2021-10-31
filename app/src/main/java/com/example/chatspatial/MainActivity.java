@@ -210,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
             sendUserSettingActivity();
         }
         if(item.getItemId()== R.id.main_create_group_option){
-            RequestNewGroup();
+            SendUserToCreateGroupActivity();
         }
         if(item.getItemId()== R.id.main_friends_option){
             SendUserToFindFriendsActivity();
@@ -321,52 +321,52 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
-    {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode==GalleryPick  &&  resultCode==RESULT_OK  &&  data!=null)
-        {
-            ImageUri = data.getData();
-
-            CropImage.activity()
-                    .setGuidelines(CropImageView.Guidelines.ON)
-                    .setAspectRatio(1, 1)
-                    .start(this);
-        }
-
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE)
-        {
-            CropImage.ActivityResult result = CropImage.getActivityResult(data);
-
-            if (resultCode == RESULT_OK)
-            {
-
-                Uri resultUri = result.getUri();
-
-                Picasso.get().load(resultUri).placeholder(R.drawable.profile_image).fit().into(groupImageField);
-
-                StorageReference filePath = GroupProfileImagesRef.child(currentUserID + ".jpg");
-
-                filePath.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                Image image = new Image(uri.toString());
-                                String imageId = RootRef.push().getKey();
-                                RootRef.child("Groups").child(currentUserID).child(groupName).child("image").setValue(image.getImage());
-                                Toast.makeText(MainActivity.this, "Group Image uploaded Successfully...", Toast.LENGTH_SHORT).show();
-
-                            }
-                        });
-                    }
-                });
-            }
-        }
-    }
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
+//    {
+//        super.onActivityResult(requestCode, resultCode, data);
+//
+//        if (requestCode==GalleryPick  &&  resultCode==RESULT_OK  &&  data!=null)
+//        {
+//            ImageUri = data.getData();
+//
+//            CropImage.activity()
+//                    .setGuidelines(CropImageView.Guidelines.ON)
+//                    .setAspectRatio(1, 1)
+//                    .start(this);
+//        }
+//
+//        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE)
+//        {
+//            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+//
+//            if (resultCode == RESULT_OK)
+//            {
+//
+//                Uri resultUri = result.getUri();
+//
+//                Picasso.get().load(resultUri).placeholder(R.drawable.profile_image).fit().into(groupImageField);
+//
+//                StorageReference filePath = GroupProfileImagesRef.child(currentUserID + ".jpg");
+//
+//                filePath.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                    @Override
+//                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                        filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+//                            @Override
+//                            public void onSuccess(Uri uri) {
+//                                Image image = new Image(uri.toString());
+//                                String imageId = RootRef.push().getKey();
+//                                RootRef.child("Groups").child(currentUserID).child(groupName).child("image").setValue(image.getImage());
+//                                Toast.makeText(MainActivity.this, "Group Image uploaded Successfully...", Toast.LENGTH_SHORT).show();
+//
+//                            }
+//                        });
+//                    }
+//                });
+//            }
+//        }
+//    }
 
     private void updateUserStatus(String state)
     {
@@ -400,5 +400,11 @@ public class MainActivity extends AppCompatActivity {
         Intent searchIntent = new Intent(MainActivity.this, SearchFriendsActivity.class);
         startActivity(searchIntent);
     }
+    private void SendUserToCreateGroupActivity()
+    {
+        Intent groupIntent = new Intent(MainActivity.this, CreateGroupActivity.class);
+        startActivity(groupIntent);
+    }
+
 
 }

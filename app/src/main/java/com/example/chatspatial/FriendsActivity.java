@@ -2,6 +2,7 @@ package com.example.chatspatial;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -9,9 +10,12 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +30,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.util.HashMap;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FriendsActivity extends AppCompatActivity {
@@ -33,21 +39,31 @@ public class FriendsActivity extends AppCompatActivity {
     private RecyclerView myContactsList;
     private FloatingActionButton fabBtn;
 
+    private Toolbar mToolbar;
+
     private DatabaseReference ContacsRef, UsersRef,RootRef;
     private FirebaseAuth mAuth;
     private String currentUserID;
-    private boolean IsSelect = true;
-    private String groupName;
+    private boolean IsSelect=true;
+    private String groupName,userImage,GroupImage="";
+    private HashMap<String, Object> profileMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends);
 
+        mToolbar = findViewById(R.id.friends_toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
+        getSupportActionBar().setTitle("Add/Remove People");
+
         myContactsList = findViewById(R.id.friends_list);
         myContactsList.setLayoutManager(new LinearLayoutManager(this));
 
         fabBtn = findViewById(R.id.fabID);
+        fabBtn.setVisibility(View.INVISIBLE);
         fabBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,6 +82,24 @@ public class FriendsActivity extends AppCompatActivity {
         ContacsRef = FirebaseDatabase.getInstance().getReference().child("Contacts").child(currentUserID);
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
         RootRef = FirebaseDatabase.getInstance().getReference();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.add_friend,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+            case R.id.main_add_option:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -101,7 +135,7 @@ public class FriendsActivity extends AppCompatActivity {
 
                             if (dataSnapshot.hasChild("image"))
                             {
-                                String userImage = dataSnapshot.child("image").getValue().toString();
+                                userImage = dataSnapshot.child("image").getValue().toString();
                                 String profileName = dataSnapshot.child("name").getValue().toString();
                                 String profileStatus = dataSnapshot.child("status").getValue().toString();
 
@@ -117,23 +151,25 @@ public class FriendsActivity extends AppCompatActivity {
                                 holder.userName.setText(profileName);
                                 holder.userStatus.setText(profileStatus);
                             }
-//                            RootRef.child("Groups").child(getRef(position).getKey()).child(groupName)
-//                                    .addValueEventListener(new ValueEventListener() {
-//                                        @Override
-//                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                                            String value = dataSnapshot.child("select").getValue().toString();
-//                                            if(value.equals("true")){
-//                                                holder.userName.setTextColor(Color.rgb(60, 179, 113));
-//                                                holder.userStatus.setTextColor(Color.rgb(60, 179, 113));
-//                                                holder.profileImage.setBorderColor(Color.rgb(60, 179, 113));
-//                                            }
-//                                        }
-//
-//                                        @Override
-//                                        public void onCancelled(@NonNull DatabaseError error) {
-//
-//                                        }
-//                                    });
+                            holder.selectRadio.setVisibility(View.VISIBLE);
+                            RootRef.child("Groups").child(getRef(position).getKey())
+                                        .addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                if (snapshot.exists()){
+                                                    holder.selectRadio.setChecked(true);
+                                                    holder.userName.setTextColor(Color.rgb(60, 179, 113));
+                                                    holder.userStatus.setTextColor(Color.rgb(60, 179, 113));
+                                                    holder.profileImage.setBorderColor(Color.rgb(60, 179, 113));
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                            }
+                                        });
+
                         }
                     }
 
@@ -147,27 +183,48 @@ public class FriendsActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         String visit_user_id = getRef(position).getKey();
-                        if(IsSelect){
+                        if(IsSelect==true){
+                            holder.selectRadio.setVisibility(View.VISIBLE);
+                            holder.selectRadio.setChecked(true);
                             holder.userName.setTextColor(Color.rgb(60, 179, 113));
                             holder.userStatus.setTextColor(Color.rgb(60, 179, 113));
                             holder.profileImage.setBorderColor(Color.rgb(60, 179, 113));
-                            RootRef.child("Groups").child(visit_user_id).child(groupName).setValue("");
-                            //RootRef.child("Group Messages").child(groupName).child(visit_user_id).setValue("");
+
+                            RootRef.child("Groups").child(currentUserID).child(groupName)
+                                    .addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            if (snapshot.child("image").exists()){
+                                                GroupImage = snapshot.child("image").getValue().toString();
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+
+                                        }
+                                    });
+                            
+                            profileMap = new HashMap<>();
+                            profileMap.put("isSelected", "true");
+                            profileMap.put("groupName", groupName);
+                            profileMap.put("image",GroupImage);
+
+                            RootRef.child("Groups").child(visit_user_id).child(groupName).updateChildren(profileMap);
+                            RootRef.child("Group Member").child(groupName).child(visit_user_id).child(groupName).setValue("");
                             Toast.makeText(FriendsActivity.this, "Add friends", Toast.LENGTH_SHORT).show();
                             IsSelect = false;
                         }else{
+                            holder.selectRadio.setVisibility(View.VISIBLE);
+                            holder.selectRadio.setChecked(false);
                             holder.userName.setTextColor(Color.GRAY);
                             holder.userStatus.setTextColor(Color.GRAY);
                             holder.profileImage.setBorderColor(Color.GRAY);
                             RootRef.child("Groups").child(visit_user_id).child(groupName).removeValue();
-                            //RootRef.child("Group Messages").child(groupName).child(visit_user_id).removeValue();
+                            RootRef.child("Group Member").child(groupName).child(visit_user_id).removeValue();
                             Toast.makeText(FriendsActivity.this, "Remove Friends", Toast.LENGTH_SHORT).show();
                             IsSelect = true;
                         }
-
-                        //Intent profileIntent = new Intent(FriendsActivity.this, ProfileActivity.class);
-                        //profileIntent.putExtra("visit_user_id", visit_user_id);
-                        //startActivity(profileIntent);
                     }
                 });
             }
@@ -191,6 +248,7 @@ public class FriendsActivity extends AppCompatActivity {
         TextView userName, userStatus;
         CircleImageView profileImage;
         ImageView onlineIcon;
+        RadioButton selectRadio;
 
 
         public ContactsViewHolder(@NonNull View itemView)
@@ -201,6 +259,7 @@ public class FriendsActivity extends AppCompatActivity {
             userStatus = itemView.findViewById(R.id.user_status);
             profileImage = itemView.findViewById(R.id.users_profile_image);
             onlineIcon = (ImageView) itemView.findViewById(R.id.user_online_status);
+            selectRadio = itemView.findViewById(R.id.radio);
         }
     }
 }

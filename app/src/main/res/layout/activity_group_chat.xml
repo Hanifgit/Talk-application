@@ -50,7 +50,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="23dp"
             android:src="@drawable/send_files"
-            android:layout_marginLeft="248dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="100dp"
             android:background="@color/white"
             />
 

@@ -106,7 +106,8 @@ public class GroupsFragment extends Fragment {
                                     //final String retStatus = dataSnapshot.child("status").getValue().toString();
 
                                     holder.userName.setText(groupName);
-                                    holder.userStatus.setVisibility(View.INVISIBLE);
+                                    holder.userStatus.setText("Active Now");
+                                    //holder.userStatus.setVisibility(View.INVISIBLE);
 
 //
 //                                    if (dataSnapshot.child("userState").hasChild("state"))

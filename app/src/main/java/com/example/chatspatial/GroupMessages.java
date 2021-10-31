@@ -1,18 +1,19 @@
 package com.example.chatspatial;
 
 public class GroupMessages {
-    private String from, message,time, date, name;
+    private String from, message,time, date, name,type;
 
     public GroupMessages(){
 
     }
 
-    public GroupMessages(String from, String message, String time, String date, String name) {
+    public GroupMessages(String from, String message, String time, String date, String name, String type) {
         this.from = from;
         this.message = message;
         this.time = time;
         this.date = date;
         this.name = name;
+        this.type = type;
     }
 
     public String getFrom() {
@@ -53,5 +54,13 @@ public class GroupMessages {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

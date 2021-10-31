@@ -1,6 +1,8 @@
 package com.example.chatspatial;
 
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +53,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
 
         String fromUserID = messages.getFrom();
 
-        //String fromMessageType = GroupMessages.getType();
+        String fromMessageType = messages.getType();
 
         usersRef = FirebaseDatabase.getInstance().getReference().child("Users").child(fromUserID);
 
@@ -83,10 +85,13 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
         holder.messageReceiverPicture.setVisibility(View.GONE);
         holder.receiverMessageTextDate.setVisibility(View.GONE);
         holder.senderMessageTextDate.setVisibility(View.GONE);
+        holder.messageReceiverImageDate.setVisibility(View.GONE);
+        holder.messageSenderImageDate.setVisibility(View.GONE);
 
 
-        //if (fromMessageType.equals("text"))
-        //{
+
+        if (fromMessageType.equals("text"))
+        {
             if (fromUserID.equals(messageSenderId))
             {
                 holder.senderMessageText.setVisibility(View.VISIBLE);
@@ -95,7 +100,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
                 holder.senderMessageText.setBackgroundResource(R.drawable.sender_messages_layout);
                 holder.senderMessageText.setTextColor(Color.BLACK);
                 holder.senderMessageText.setText(messages.getMessage());
-                holder.senderMessageTextDate.setText(messages.getTime() + " - " + messages.getDate());
+                holder.senderMessageTextDate.setText(messages.getTime() + " - " + messages.getDate()+"\n");
             }
             else
             {
@@ -110,7 +115,58 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
                 holder.receiverMessageName.setText(messages.getName());
                 holder.receiverMessageTextDate.setText(messages.getTime() + " - " + messages.getDate()+"\n\n");
             }
-        //}
+        }
+        else if (fromMessageType.equals("image")){
+            if (fromUserID.equals(messageSenderId))
+            {
+                holder.messageSenderPicture.setVisibility(View.VISIBLE);
+                holder.messageSenderImageDate.setVisibility(View.VISIBLE);
+                holder.messageSenderImageDate.setText(messages.getTime() + " - " + messages.getDate()+"\n");
+                Picasso.get().load(messages.getMessage()).into(holder.messageSenderPicture);
+            }
+            else
+            {
+                holder.receiverMessageName.setVisibility(View.VISIBLE);
+                holder.receiverProfileImage.setVisibility(View.VISIBLE);
+                holder.messageReceiverPicture.setVisibility(View.VISIBLE);
+                holder.receiverMessageName.setText(messages.getName());
+                holder.messageReceiverImageDate.setVisibility(View.VISIBLE);
+                holder.messageReceiverImageDate.setText(messages.getTime() + " - " + messages.getDate()+"\n");
+                Picasso.get().load(messages.getMessage()).into(holder.messageReceiverPicture);
+            }
+        }else{
+            if (fromUserID.equals(messageSenderId))
+            {
+                holder.messageSenderPicture.setVisibility(View.VISIBLE);
+                holder.messageSenderPicture.setBackgroundResource(R.drawable.file);
+                holder.messageSenderImageDate.setVisibility(View.VISIBLE);
+                holder.messageSenderImageDate.setText(messages.getTime() + " - " + messages.getDate()+"\n");
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(userMessagesList.get(position).getMessage()));
+                        holder.itemView.getContext().startActivity(intent);
+                    }
+                });
+            }
+            else
+            {
+                holder.receiverMessageName.setVisibility(View.VISIBLE);
+                holder.receiverProfileImage.setVisibility(View.VISIBLE);
+                holder.messageReceiverPicture.setVisibility(View.VISIBLE);
+                holder.messageReceiverPicture.setBackgroundResource(R.drawable.file);
+                holder.receiverMessageName.setText(messages.getName());
+                holder.messageReceiverImageDate.setVisibility(View.VISIBLE);
+                holder.messageReceiverImageDate.setText(messages.getTime() + " - " + messages.getDate()+"\n");
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(userMessagesList.get(position).getMessage()));
+                        holder.itemView.getContext().startActivity(intent);
+                    }
+                });
+            }
+        }
     }
 
     @Override
@@ -120,7 +176,8 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
 
     public class GroupMessageViewHolder extends RecyclerView.ViewHolder
     {
-        public TextView receiverMessageName,senderMessageText, receiverMessageText,senderMessageTextDate,receiverMessageTextDate;
+        public TextView receiverMessageName,senderMessageText, receiverMessageText,senderMessageTextDate
+                ,receiverMessageTextDate,messageReceiverImageDate,messageSenderImageDate;
         public CircleImageView receiverProfileImage;
         public ImageView messageSenderPicture, messageReceiverPicture;
 
@@ -137,6 +194,8 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
             senderMessageTextDate = itemView.findViewById(R.id.sender_messsage_text_date);
             receiverMessageTextDate = itemView.findViewById(R.id.receiver_message_text_date);
             receiverMessageName = itemView.findViewById(R.id.receiver_message_name);
+            messageReceiverImageDate = itemView.findViewById(R.id.message_receiver_image_date);
+            messageSenderImageDate = itemView.findViewById(R.id.message_sender_image_date);
         }
     }
 }

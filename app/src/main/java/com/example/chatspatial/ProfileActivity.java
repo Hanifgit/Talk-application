@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -25,11 +26,11 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    private String receiverUserID, senderUserID, Current_State,userImage,userName;
+    private String receiverUserID, senderUserID, Current_State,userImage,userName,userNumber;
 
-    private CircleImageView userProfileImage;
-    private TextView userProfileName, userProfileStatus;
-    private Button SendMessageRequestButton, DeclineMessageRequestButton;
+    private ImageView userProfileImage;
+    private TextView userProfileName, userProfileStatus,userProfileNumber;
+    private TextView SendMessageRequestButton, DeclineMessageRequestButton;
 
     private DatabaseReference UserRef, ChatRequestRef, ContactsRef, NotificationRef;
     private FirebaseAuth mAuth;
@@ -56,6 +57,7 @@ public class ProfileActivity extends AppCompatActivity {
         userProfileImage =  findViewById(R.id.visit_profile_image);
         userProfileName =  findViewById(R.id.visit_user_name);
         userProfileStatus =  findViewById(R.id.visit_profile_status);
+        userProfileNumber = findViewById(R.id.visit_profile_phone);
         SendMessageRequestButton =  findViewById(R.id.send_message_request_button);
         DeclineMessageRequestButton = findViewById(R.id.decline_message_request_button);
         Current_State = "new";
@@ -74,21 +76,23 @@ public class ProfileActivity extends AppCompatActivity {
                 {
                     userImage = dataSnapshot.child("image").getValue().toString();
                     userName = dataSnapshot.child("name").getValue().toString();
-                    String userstatus = dataSnapshot.child("status").getValue().toString();
-
+                    String userStatus = dataSnapshot.child("status").getValue().toString();
+                    userNumber = dataSnapshot.child("phone").getValue().toString();
                     Picasso.get().load(userImage).placeholder(R.drawable.profile_image).into(userProfileImage);
                     userProfileName.setText(userName);
-                    userProfileStatus.setText(userstatus);
+                    userProfileStatus.setText(userStatus);
+                    userProfileNumber.setText(userNumber);
 
                     ManageChatRequests();
                 }
                 else
                 {
-                    String userName = dataSnapshot.child("name").getValue().toString();
-                    String userstatus = dataSnapshot.child("status").getValue().toString();
+                    userName = dataSnapshot.child("name").getValue().toString();
+                    String userStatus = dataSnapshot.child("status").getValue().toString();
 
                     userProfileName.setText(userName);
-                    userProfileStatus.setText(userstatus);
+                    userProfileStatus.setText(userStatus);
+                    userProfileNumber.setText(userNumber);
 
 
                     ManageChatRequests();

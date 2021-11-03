@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".SettingsActivity">
 
-
     <include
         layout="@layout/app_bar_layout"
         android:id="@+id/settings_toolbar"
@@ -15,8 +14,8 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/set_profile_image"
-        android:layout_width="270dp"
-        android:layout_height="270dp"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="90dp"
@@ -24,69 +23,103 @@
         app:civ_border_width="5dp"
         app:civ_border_color="@color/colorPrimary"/>
 
-    <EditText
-        android:id="@+id/set_user_name"
+    <TextView
+        android:id="@+id/user_name"
+        android:layout_width="match_parent"
+        android:textSize="18sp"
+        android:textColor="@color/colorPrimary"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:layout_below="@id/set_profile_image"
+        android:layout_height="wrap_content"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layout_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="32dp"
+        app:errorEnabled="true"
+        app:counterEnabled="true"
+        app:layout_constraintEnd_toEndOf="parent"
         android:layout_below="@+id/set_profile_image"
-        android:inputType="textMultiLine"
-        android:hint="user name"
-        android:textAlignment="center"
-        android:drawableStart="@drawable/edit_profile"
-        android:textColor="@color/colorPrimaryDark"
-        android:textStyle="bold"
-        android:background="@drawable/inputs"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
-        android:padding="6dp"
-        android:layout_marginTop="10dp"
-        android:gravity="center_horizontal"
-        android:drawableLeft="@drawable/edit_profile" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/set_user_name"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="textMultiLine"
+            android:textSize="15sp"
+            android:hint="user name"/>
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <EditText
-        android:id="@+id/set_profile_status"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layout_status"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/set_user_name"
-        android:inputType="textMultiLine"
-        android:hint="hey, i am available now."
-        android:textAlignment="center"
-        android:drawableStart="@drawable/edit_status"
-        android:textColor="@color/colorPrimaryDark"
-        android:textStyle="bold"
-        android:background="@drawable/inputs"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
-        android:padding="6dp"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="10dp"
-        android:gravity="center_horizontal"
-        android:drawableLeft="@drawable/edit_status" />
+        android:layout_marginEnd="32dp"
+        app:errorEnabled="true"
+        app:counterEnabled="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_below="@+id/layout_name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/set_profile_status"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="textMultiLine"
+            android:textSize="15sp"
+            android:hint="hey, i am available now."/>
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <EditText
-        android:id="@+id/set_user_phone"
+    <LinearLayout
+        android:id="@+id/phoneLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/set_profile_status"
-        android:inputType="phone"
-        android:hint="phone number"
-        android:textAlignment="center"
-        android:drawableStart="@drawable/edit_phone"
-        android:textColor="@color/colorPrimaryDark"
-        android:textStyle="bold"
-        android:background="@drawable/inputs"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
-        android:padding="6dp"
+        android:layout_below="@+id/layout_status"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="10dp"
-        android:gravity="center_horizontal"
-        android:drawableLeft="@drawable/edit_phone" />
+        android:layout_marginEnd="32dp"
+        android:layout_height="wrap_content">
+        <com.hbb20.CountryCodePicker
+            android:id="@+id/ccp"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginTop="20dp"
+            app:ccp_textSize="15sp"
+            android:layout_below="@id/login_image"
+            app:ccp_defaultNameCode="BD" />
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layout_phone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:errorEnabled="true"
+            app:counterEnabled="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/set_user_phone"
+                android:layout_width="match_parent"
+                android:inputType="phone"
+                android:textSize="15sp"
+                android:layout_height="match_parent"
+                android:hint="1741885987" />
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
 
     <Button
         android:id="@+id/update_settings_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/set_user_phone"
+        android:layout_below="@+id/phoneLayout"
         android:inputType="textMultiLine"
         android:text="Update"
         android:textAlignment="center"
@@ -94,11 +127,11 @@
         android:textStyle="bold"
         android:background="@drawable/buttons"
         android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
+        android:layout_marginEnd="16dp"
         android:padding="6dp"
         android:layout_marginTop="10dp"
         android:textAllCaps="false"
-        android:textSize="20sp"
-        android:gravity="center_horizontal" />
+        android:textSize="15sp"
+       />
 
 </RelativeLayout>

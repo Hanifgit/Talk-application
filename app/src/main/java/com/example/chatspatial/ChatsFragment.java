@@ -1,6 +1,7 @@
 package com.example.chatspatial;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -95,7 +96,7 @@ public class ChatsFragment extends Fragment {
 
                                     final String retName = dataSnapshot.child("name").getValue().toString();
                                     final String retStatus = dataSnapshot.child("status").getValue().toString();
-
+                                    holder.userName.setTextColor(Color.rgb(0,0,0));
                                     holder.userName.setText(retName);
 
 

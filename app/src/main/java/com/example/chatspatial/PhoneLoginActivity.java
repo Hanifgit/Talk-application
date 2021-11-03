@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,6 +25,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.hbb20.CountryCodePicker;
 
 import java.util.concurrent.TimeUnit;
 
@@ -31,6 +33,8 @@ public class PhoneLoginActivity extends AppCompatActivity {
 
     private Button SendVerificationCodeButton, VerifyButton;
     private EditText InputPhoneNumber, InputVerificationCode,InputPassword;
+    private TextInputLayout codeLayout,phoneLayout;
+    private CountryCodePicker phoneCode;
 
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks callbacks;
     private FirebaseAuth mAuth;
@@ -57,23 +61,26 @@ public class PhoneLoginActivity extends AppCompatActivity {
         VerifyButton = (Button) findViewById(R.id.verify_button);
         InputPhoneNumber = (EditText) findViewById(R.id.phone_number_input);
         InputVerificationCode = (EditText) findViewById(R.id.verification_code_input);
-        InputPassword = findViewById(R.id.password_input);
         loadingBar = new ProgressDialog(this);
         mAuth = FirebaseAuth.getInstance();
-        //currentUserID = mAuth.getCurrentUser().getUid();
-        //RootRef = FirebaseDatabase.getInstance().getReference();
 
+        phoneCode = findViewById(R.id.ccp);
+        phoneCode.registerCarrierNumberEditText(InputPhoneNumber);
+        codeLayout = findViewById(R.id.layout_code);
+        phoneLayout = findViewById(R.id.layout_phone);
 
         SendVerificationCodeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view)
             {
-                String phoneNumber = InputPhoneNumber.getText().toString();
-
-                if (TextUtils.isEmpty(phoneNumber))
+                String phoneNumber = phoneCode.getFullNumberWithPlus();
+                if(phoneNumber.length()>14){
+                    InputPhoneNumber.setError("valid number");
+                }
+                else if (TextUtils.isEmpty(phoneNumber))
                 {
-                    InputPhoneNumber.setError("required phone number");
-                    Toast.makeText(PhoneLoginActivity.this, "Please enter your phone number first...", Toast.LENGTH_SHORT).show();
+                    InputPhoneNumber.setError("required number");
+                    //Toast.makeText(PhoneLoginActivity.this, "Please enter your phone number first...", Toast.LENGTH_SHORT).show();
                 }
                 else
                 {
@@ -99,7 +106,7 @@ public class PhoneLoginActivity extends AppCompatActivity {
             {
                 SendVerificationCodeButton.setVisibility(View.INVISIBLE);
                 InputPhoneNumber.setVisibility(View.INVISIBLE);
-                //InputPassword.setVisibility(View.INVISIBLE);
+                phoneLayout.setVisibility(View.INVISIBLE);
 
                 String verificationCode = InputVerificationCode.getText().toString();
 
@@ -136,10 +143,12 @@ public class PhoneLoginActivity extends AppCompatActivity {
 
                 SendVerificationCodeButton.setVisibility(View.VISIBLE);
                 InputPhoneNumber.setVisibility(View.VISIBLE);
-                //InputPassword.setVisibility(View.VISIBLE);
+                phoneLayout.setVisibility(View.VISIBLE);
+                phoneCode.setVisibility(View.VISIBLE);
 
                 VerifyButton.setVisibility(View.INVISIBLE);
                 InputVerificationCode.setVisibility(View.INVISIBLE);
+                codeLayout.setVisibility(View.INVISIBLE);
             }
 
             public void onCodeSent(String verificationId,
@@ -154,10 +163,12 @@ public class PhoneLoginActivity extends AppCompatActivity {
 
                 SendVerificationCodeButton.setVisibility(View.INVISIBLE);
                 InputPhoneNumber.setVisibility(View.INVISIBLE);
-                //InputPassword.setVisibility(View.INVISIBLE);
+                phoneLayout.setVisibility(View.INVISIBLE);
+                phoneCode.setVisibility(View.INVISIBLE);
 
                 VerifyButton.setVisibility(View.VISIBLE);
                 InputVerificationCode.setVisibility(View.VISIBLE);
+                codeLayout.setVisibility(View.VISIBLE);
             }
         };
     }

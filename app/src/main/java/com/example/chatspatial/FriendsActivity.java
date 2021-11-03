@@ -139,6 +139,7 @@ public class FriendsActivity extends AppCompatActivity {
                                 String profileName = dataSnapshot.child("name").getValue().toString();
                                 String profileStatus = dataSnapshot.child("status").getValue().toString();
 
+                                holder.userName.setTextColor(Color.rgb(0,0,0));
                                 holder.userName.setText(profileName);
                                 holder.userStatus.setText(profileStatus);
                                 Picasso.get().load(userImage).placeholder(R.drawable.profile_image).into(holder.profileImage);
@@ -148,6 +149,7 @@ public class FriendsActivity extends AppCompatActivity {
                                 String profileName = dataSnapshot.child("name").getValue().toString();
                                 String profileStatus = dataSnapshot.child("status").getValue().toString();
 
+                                holder.userName.setTextColor(Color.rgb(0,0,0));
                                 holder.userName.setText(profileName);
                                 holder.userStatus.setText(profileStatus);
                             }

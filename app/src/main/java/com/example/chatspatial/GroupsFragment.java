@@ -1,6 +1,7 @@
 package com.example.chatspatial;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -105,6 +106,7 @@ public class GroupsFragment extends Fragment {
                                     final String groupName = dataSnapshot.child("groupName").getValue().toString();
                                     //final String retStatus = dataSnapshot.child("status").getValue().toString();
 
+                                    holder.userName.setTextColor(Color.rgb(0,0,0));
                                     holder.userName.setText(groupName);
                                     holder.userStatus.setText("Active Now");
                                     //holder.userStatus.setVisibility(View.INVISIBLE);

@@ -43,5 +43,15 @@
         android:textSize="14sp"
         android:layout_alignParentLeft="true" />
 
+    <ImageView
+        android:id="@+id/custome_user_phone_call"
+        android:layout_width="wrap_content"
+        android:src="@drawable/local_phone"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="30dp"
+        android:layout_height="wrap_content"/>
+
 
 </RelativeLayout>

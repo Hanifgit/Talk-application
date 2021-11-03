@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,6 +31,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.hbb20.CountryCodePicker;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -42,6 +45,9 @@ public class SettingsActivity extends AppCompatActivity
     private Button UpdateAccountSettings;
     private EditText userName, userStatus,userPhone;
     private CircleImageView userProfileImage;
+    private CountryCodePicker phoneCode;
+    private TextView user_name;
+    private TextInputLayout name_layout;
 
     private String currentUserID,userEmail,userPassword;
     private FirebaseAuth mAuth;
@@ -75,6 +81,7 @@ public class SettingsActivity extends AppCompatActivity
 
 
         userName.setVisibility(View.INVISIBLE);
+        name_layout.setVisibility(View.INVISIBLE);
 
         RetrieveUserInfo();
 
@@ -105,6 +112,8 @@ public class SettingsActivity extends AppCompatActivity
         userName =  findViewById(R.id.set_user_name);
         userStatus =  findViewById(R.id.set_profile_status);
         userPhone = findViewById(R.id.set_user_phone);
+        user_name = findViewById(R.id.user_name);
+        name_layout = findViewById(R.id.layout_name);
         userProfileImage = findViewById(R.id.set_profile_image);
         loadingBar = new ProgressDialog(this);
 
@@ -113,6 +122,9 @@ public class SettingsActivity extends AppCompatActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowCustomEnabled(true);
         getSupportActionBar().setTitle("Account Settings");
+
+        phoneCode = findViewById(R.id.ccp);
+        phoneCode.registerCarrierNumberEditText(userPhone);
     }
 
     @Override
@@ -182,19 +194,25 @@ public class SettingsActivity extends AppCompatActivity
     {
         String setUserName = userName.getText().toString().trim();
         String setStatus = userStatus.getText().toString().trim();
-        String setPhone = userPhone.getText().toString().trim();
+        String setPhone = phoneCode.getFullNumberWithPlus().trim();
 
-        if (TextUtils.isEmpty(setUserName))
-        {
-            Toast.makeText(this, "Please write your user name first....", Toast.LENGTH_SHORT).show();
+        if(setPhone.length()>14){
+            userPhone.setError("valid number");
         }
-        if (TextUtils.isEmpty(setStatus))
+        else if (TextUtils.isEmpty(setUserName))
         {
-            Toast.makeText(this, "Please write your status....", Toast.LENGTH_SHORT).show();
+            userName.setError("required name");
+            //Toast.makeText(this, "Please write your user name first....", Toast.LENGTH_SHORT).show();
         }
-        if (TextUtils.isEmpty(setPhone))
+        else if (TextUtils.isEmpty(setStatus))
         {
-            Toast.makeText(this, "Please write your phone number....", Toast.LENGTH_SHORT).show();
+            userStatus.setError("required statue");
+            //Toast.makeText(this, "Please write your status....", Toast.LENGTH_SHORT).show();
+        }
+        else if (TextUtils.isEmpty(setPhone))
+        {
+            userPhone.setError("required number");
+            //Toast.makeText(this, "Please write your phone number....", Toast.LENGTH_SHORT).show();
         }
         else
         {
@@ -238,11 +256,12 @@ public class SettingsActivity extends AppCompatActivity
                             String retrieveUserName = dataSnapshot.child("name").getValue().toString().trim();
                             String retrievesStatus = dataSnapshot.child("status").getValue().toString().trim();
                             String retrieveProfileImage = dataSnapshot.child("image").getValue().toString().trim();
-                            String retrievesPhone = dataSnapshot.child("phone").getValue().toString().trim();
+                            String retrievesPhone = dataSnapshot.child("phone").getValue().toString().substring(4);
 
                             userName.setText(retrieveUserName);
                             userStatus.setText(retrievesStatus);
                             userPhone.setText(retrievesPhone);
+                            user_name.setText(retrieveUserName);
                             Picasso.get().load(retrieveProfileImage).placeholder(R.drawable.profile_image).into(userProfileImage);
                         }
                         else if ((dataSnapshot.exists()) && (dataSnapshot.hasChild("name")))
@@ -258,6 +277,7 @@ public class SettingsActivity extends AppCompatActivity
                         else
                         {
                             userName.setVisibility(View.VISIBLE);
+                            name_layout.setVisibility(View.VISIBLE);
                             Toast.makeText(SettingsActivity.this, "Please set & update your profile information...", Toast.LENGTH_SHORT).show();
                         }
                     }

@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -100,7 +101,7 @@ public class SearchFriendsActivity extends AppCompatActivity {
 
         FirebaseRecyclerOptions<Contacts> options = null;
 
-        if(searchStr.equals("")){
+        if(searchStr.equals("") || searchStr.length() == 0){
             options = new FirebaseRecyclerOptions.Builder<Contacts>()
                     .setQuery(UsersRef, Contacts.class)
                     .build();
@@ -116,6 +117,8 @@ public class SearchFriendsActivity extends AppCompatActivity {
                 new FirebaseRecyclerAdapter<Contacts, SearchFriendViewHolder>(options) {
                     @Override
                     protected void onBindViewHolder(@NonNull SearchFriendViewHolder holder, int position, @NonNull Contacts model) {
+                        holder.userName.setTextColor(Color.rgb(0,0,0));
+                        holder.userStatus.setTextColor(Color.GRAY);
                         holder.userName.setText(model.getName());
                         holder.userStatus.setText(model.getStatus());
                         Picasso.get().load(model.getImage()).placeholder(R.drawable.profile_image).into(holder.profileImage);

@@ -33,7 +33,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 {
         private List<Messages> userMessagesList;
         private FirebaseAuth mAuth;
-        private DatabaseReference usersRef;
+        private DatabaseReference usersRef,receiverUsersRef;
 
 
         public MessageAdapter (List<Messages> userMessagesList)
@@ -65,7 +65,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             }
         }
 
-
         @NonNull
         @Override
         public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i)
@@ -86,6 +85,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
             String fromUserID = messages.getFrom();
             String fromMessageType = messages.getType();
+            String toReceiverId = messages.getTo();
 
             usersRef = FirebaseDatabase.getInstance().getReference().child("Users").child(fromUserID);
 
@@ -95,6 +95,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                 {
                     if (dataSnapshot.hasChild("image"))
                     {
+                        if(fromMessageType.equals("call")){
+                            String receiverName = dataSnapshot.child("name").getValue().toString();
+                            messageViewHolder.receiverMessageText.setText(receiverName + " called you");
+                        }
+
                         String receiverImage = dataSnapshot.child("image").getValue().toString();
 
                         Picasso.get().load(receiverImage).placeholder(R.drawable.profile_image).into(messageViewHolder.receiverProfileImage);
@@ -106,6 +111,25 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
                 }
             });
+
+            receiverUsersRef = FirebaseDatabase.getInstance().getReference().child("Users").child(toReceiverId);
+            receiverUsersRef.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.hasChild("name"))
+                            {
+                                if(fromMessageType.equals("call")){
+                                    String receiverName = snapshot.child("name").getValue().toString();
+                                    messageViewHolder.senderMessageText.setText("You called " + receiverName);
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
 
             messageViewHolder.receiverMessageText.setVisibility(View.GONE);
             messageViewHolder.receiverProfileImage.setVisibility(View.GONE);
@@ -176,6 +200,24 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                     //Picasso.get().load(messages.getMessage()).into(messageViewHolder.messageReceiverPicture);
                 }
             }
+            else if(fromMessageType.equals("call")){
+                if(fromUserID.equals(messageSenderId)){
+                    messageViewHolder.senderMessageText.setVisibility(View.VISIBLE);
+                    messageViewHolder.senderMessageTextDate.setVisibility(View.VISIBLE);
+                    messageViewHolder.senderMessageText.setBackgroundResource(R.drawable.sender_messages_layout);
+                    messageViewHolder.senderMessageText.setTextColor(Color.GREEN);
+                    messageViewHolder.senderMessageTextDate.setText(messages.getTime() + " - " + messages.getDate()+"\n");
+                }
+                else{
+                    messageViewHolder.receiverProfileImage.setVisibility(View.VISIBLE);
+                    messageViewHolder.receiverMessageText.setVisibility(View.VISIBLE);
+                    messageViewHolder.receiverMessageTextDate.setVisibility(View.VISIBLE);
+
+                    messageViewHolder.receiverMessageText.setBackgroundResource(R.drawable.receiver_messages_layout);
+                    messageViewHolder.receiverMessageText.setTextColor(Color.RED);
+                    messageViewHolder.receiverMessageTextDate.setText(messages.getTime() + " - " + messages.getDate()+"\n");
+                }
+            }
 
             if(fromUserID.equals(messageSenderId)){
                 messageViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -213,7 +255,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                             });
                             builder.show();
                         }
-                        else if(userMessagesList.get(i).getType().equals("text")){
+                        else if(userMessagesList.get(i).getType().equals("text") ||
+                                userMessagesList.get(i).getType().equals("call")){
                             CharSequence option[] = new CharSequence[]{
                                     "Delete for me",
                                     "Delete for Everyone",
@@ -303,7 +346,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                             });
                             builder.show();
                         }
-                        else if(userMessagesList.get(i).getType().equals("text")){
+                        else if(userMessagesList.get(i).getType().equals("text")
+                         || userMessagesList.get(i).getType().equals("call")){
                             CharSequence option[] = new CharSequence[]{
                                     "Delete for me",
                                     "Cancel",

@@ -49,8 +49,8 @@
         android:text="Create new account"
         android:textAllCaps="false"
         android:textSize="24sp"
-        android:textColor="@android:color/background_light"
-        android:background="@drawable/buttons"/>
+        android:textColor="@android:color/black"
+        android:background="@drawable/inputs"/>
     <TextView
         android:id="@+id/account"
         android:layout_width="match_parent"

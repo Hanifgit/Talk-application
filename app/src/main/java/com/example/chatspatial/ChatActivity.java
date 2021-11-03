@@ -2,18 +2,23 @@ package com.example.chatspatial;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -21,6 +26,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,7 +60,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ChatActivity extends AppCompatActivity {
 
-    private String messageReceiverID, messageReceiverName, messageReceiverImage, messageSenderID,Checker = "",myUrl="";
+    public String messageReceiverID, messageReceiverName, messageReceiverImage, messageSenderID,Checker = "",myUrl="";
 
     private TextView userName, userLastSeen;
     private CircleImageView userImage;
@@ -67,6 +73,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private ImageButton SendMessageButton, SendFilesButton;
     private EditText MessageInputText;
+    private ImageView phoneCall;
 
     private final List<Messages> messagesList = new ArrayList<>();
     private LinearLayoutManager linearLayoutManager;
@@ -74,6 +81,11 @@ public class ChatActivity extends AppCompatActivity {
     private RecyclerView userMessagesList;
 
     private ProgressDialog loadingBar;
+    private AlertDialog.Builder alertDialog;
+    private AlertDialog Dialog;
+
+    private String retrievesPhone;
+    private static final int REQUEST_CALL = 111;
 
 
     private String saveCurrentTime, saveCurrentDate;
@@ -101,12 +113,27 @@ public class ChatActivity extends AppCompatActivity {
         userName.setText(messageReceiverName);
         Picasso.get().load(messageReceiverImage).placeholder(R.drawable.profile_image).into(userImage);
 
+        phoneCall.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
+            @Override
+            public void onClick(View v) {
+                SendMessage("call");
+                final String[] permission = {Manifest.permission.CALL_PHONE};
+                boolean b = ContextCompat.checkSelfPermission(ChatActivity.this,Manifest.permission.CALL_PHONE)
+                        != PackageManager.PERMISSION_GRANTED;
+                if(b){
+                    requestPermissions(permission,REQUEST_CALL);
+                }else{
+                    initiateCall();
+                }
+            }
+        });
 
         SendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view)
             {
-                SendMessage();
+                SendMessage("text");
             }
         });
 
@@ -300,6 +327,54 @@ public class ChatActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void initiateCall(){
+        RootRef.child("Users").child(messageReceiverID).addValueEventListener(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if(snapshot.exists() && snapshot.hasChild("phone")){
+                            retrievesPhone = snapshot.child("phone").getValue().toString();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                }
+        );
+        //Uri phoneUri = Uri.parse("tel:"+contact.getPhone());
+        Intent intent = new Intent(Intent.ACTION_CALL);
+        intent.setData(Uri.parse("tel:"+retrievesPhone));
+        if(intent.resolveActivity(this.getPackageManager())!=null){
+            startActivity(intent);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode==REQUEST_CALL){
+            if(grantResults.length>=0 && grantResults[0]==PackageManager.PERMISSION_GRANTED){
+                initiateCall();
+            }else{
+                //Toast.makeText(getActivity(), "Please allow this permission", Toast.LENGTH_SHORT).show();
+                alertDialog = new AlertDialog.Builder(this);
+                alertDialog.setTitle("Exit");
+                alertDialog.setMessage("Please allow this permission");
+                alertDialog.setIcon(R.drawable.ok);
+                alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //finish();
+                    }
+                });
+                Dialog = alertDialog.create();
+                Dialog.show();
+            }
+        }
+
+    }
 
     private void IntializeControllers()
     {
@@ -320,6 +395,7 @@ public class ChatActivity extends AppCompatActivity {
         userName = findViewById(R.id.custom_profile_name);
         userLastSeen = findViewById(R.id.custom_user_last_seen);
         userImage = findViewById(R.id.custom_profile_image);
+        phoneCall = findViewById(R.id.custome_user_phone_call);
 
         SendMessageButton = (ImageButton) findViewById(R.id.send_message_btn);
         SendFilesButton = (ImageButton) findViewById(R.id.send_files_btn);
@@ -340,7 +416,6 @@ public class ChatActivity extends AppCompatActivity {
         SimpleDateFormat currentTime = new SimpleDateFormat("hh:mm a");
         saveCurrentTime = currentTime.format(calendar.getTime());
     }
-
 
     private void DisplayLastSeen()
     {
@@ -376,7 +451,6 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 });
     }
-
 
     @Override
     protected void onStart()
@@ -420,11 +494,11 @@ public class ChatActivity extends AppCompatActivity {
     }
 
 
-    private void SendMessage()
+    private void SendMessage(String type)
     {
         String messageText = MessageInputText.getText().toString();
 
-        if (TextUtils.isEmpty(messageText))
+        if (TextUtils.isEmpty(messageText) && type.equals("text"))
         {
             Toast.makeText(this, "first write your message...", Toast.LENGTH_SHORT).show();
         }
@@ -440,7 +514,7 @@ public class ChatActivity extends AppCompatActivity {
 
             Map messageTextBody = new HashMap();
             messageTextBody.put("message", messageText);
-            messageTextBody.put("type", "text");
+            messageTextBody.put("type", type);
             messageTextBody.put("from", messageSenderID);
             messageTextBody.put("to", messageReceiverID);
             messageTextBody.put("messageID", messagePushID);
@@ -457,7 +531,7 @@ public class ChatActivity extends AppCompatActivity {
                 {
                     if (task.isSuccessful())
                     {
-                        Toast.makeText(ChatActivity.this, "Message Sent Successfully...", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(ChatActivity.this, "Message Sent Successfully...", Toast.LENGTH_SHORT).show();
                     }
                     else
                     {

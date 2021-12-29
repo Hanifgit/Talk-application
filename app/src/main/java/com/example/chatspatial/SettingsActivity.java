@@ -232,7 +232,7 @@ public class SettingsActivity extends AppCompatActivity
                             if (task.isSuccessful())
                             {
                                 SendUserToMainActivity();
-                                Toast.makeText(SettingsActivity.this, "Profile Updated Successfully...", Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(SettingsActivity.this, "Profile Updated Successfully...", Toast.LENGTH_SHORT).show();
                             }
                             else
                             {

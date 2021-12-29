@@ -35,7 +35,6 @@ public class ProfileActivity extends AppCompatActivity {
     private DatabaseReference UserRef, ChatRequestRef, ContactsRef, NotificationRef;
     private FirebaseAuth mAuth;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {

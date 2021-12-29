@@ -141,7 +141,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
             if (fromUserID.equals(messageSenderId))
             {
                 holder.messageSenderPicture.setVisibility(View.VISIBLE);
-                Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/chat-spatial-app.appspot.com/o/Image%20Files%2Ffile.png?alt=media&token=94efd1f9-ddf9-45a4-9bd4-76a8f51c7886")
+                Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/chat-spatial-app.appspot.com/o/Image%20Files%2Ffile.png?alt=media&token=33dd7c94-9cd4-4015-9aee-a89cd2830317")
                         .into(holder.messageSenderPicture);
                 //holder.messageSenderPicture.setBackgroundResource(R.drawable.file);
                 holder.messageSenderImageDate.setVisibility(View.VISIBLE);
@@ -159,7 +159,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
                 holder.receiverMessageName.setVisibility(View.VISIBLE);
                 holder.receiverProfileImage.setVisibility(View.VISIBLE);
                 holder.messageReceiverPicture.setVisibility(View.VISIBLE);
-                Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/chat-spatial-app.appspot.com/o/Image%20Files%2Ffile.png?alt=media&token=94efd1f9-ddf9-45a4-9bd4-76a8f51c7886")
+                Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/chat-spatial-app.appspot.com/o/Image%20Files%2Ffile.png?alt=media&token=33dd7c94-9cd4-4015-9aee-a89cd2830317")
                         .into(holder.messageReceiverPicture);
                 //holder.messageReceiverPicture.setBackgroundResource(R.drawable.file);
                 holder.receiverMessageName.setText(messages.getName());

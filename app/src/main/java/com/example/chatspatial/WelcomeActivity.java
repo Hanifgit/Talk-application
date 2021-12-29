@@ -24,7 +24,7 @@ public class WelcomeActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    sleep(7000);
+                    sleep(5000);
 
                 }catch (Exception e){
                     e.printStackTrace();

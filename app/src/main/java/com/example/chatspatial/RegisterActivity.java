@@ -83,10 +83,11 @@ public class RegisterActivity extends AppCompatActivity {
                             if(task.isSuccessful()){
                                 String currentUserID = mAuth.getCurrentUser().getUid();
                                 RootRef.child("Users").child(currentUserID).setValue("");
+                                sendVerificationEmail();
                                 //sendUserMainActivity();
-                                SendUserToSettingActivity();
+                                //SendUserToSettingActivity();
                                 //sendUserToLoginActivity();
-                                Toast.makeText(RegisterActivity.this,"Account Create Successfully..",Toast.LENGTH_LONG);
+                                //Toast.makeText(RegisterActivity.this,"Account Create Successfully..",Toast.LENGTH_LONG);
                                 loadingBar.dismiss();
                             }else{
                                 Toast.makeText(RegisterActivity.this,"Account Create Unsuccessfully..",Toast.LENGTH_LONG);
@@ -95,6 +96,25 @@ public class RegisterActivity extends AppCompatActivity {
                         }
                     });
         }
+    }
+
+    private void sendVerificationEmail() {
+        FirebaseUser user = mAuth.getCurrentUser();
+
+        user.sendEmailVerification()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            SendUserToSettingActivity();
+//                            sendUserMainActivity();
+                            Toast.makeText(RegisterActivity.this,"Email Sent..",Toast.LENGTH_LONG);
+                        }else{
+                            Toast.makeText(RegisterActivity.this,"Please verify your email..",Toast.LENGTH_LONG);
+                        }
+                    }
+                });
+
     }
 
     private void InitializeFields() {
@@ -107,6 +127,7 @@ public class RegisterActivity extends AppCompatActivity {
         RootRef = FirebaseDatabase.getInstance().getReference();
         loadingBar = new ProgressDialog(this);
     }
+
 
     private void sendUserMainActivity() {
         Intent mainIntent = new Intent(RegisterActivity.this,MainActivity.class);

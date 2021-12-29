@@ -10,7 +10,7 @@
         android:id="@+id/login_image"
         android:layout_width="match_parent"
         android:layout_height="250dp"
-        android:src="@drawable/head_background"
+        android:src="@drawable/background_log_in"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"

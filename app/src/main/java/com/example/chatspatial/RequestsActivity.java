@@ -221,7 +221,7 @@ public class RequestsActivity extends AppCompatActivity {
                                     else if (type.equals("sent"))
                                     {
                                         Button request_sent_btn = holder.itemView.findViewById(R.id.request_accept_btn);
-                                        request_sent_btn.setText("Cancel Chat Request");
+                                        request_sent_btn.setText(" Cancel Request ");
 
                                         holder.itemView.findViewById(R.id.request_cancel_btn).setVisibility(View.INVISIBLE);
 
@@ -240,7 +240,7 @@ public class RequestsActivity extends AppCompatActivity {
                                                 final String requestUserStatus = dataSnapshot.child("status").getValue().toString();
 
                                                 holder.userName.setText(requestUserName);
-                                                holder.userStatus.setText("you have sent a request to " + requestUserName);
+                                                holder.userStatus.setText("sent a request to " + requestUserName);
 
                                                 holder.AcceptButton.setOnClickListener(new View.OnClickListener() {
                                                     @Override
@@ -301,7 +301,7 @@ public class RequestsActivity extends AppCompatActivity {
                     @Override
                     public RequestsViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i)
                     {
-                        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.users_display_layout, viewGroup, false);
+                        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.users_request_display_layout, viewGroup, false);
                         RequestsViewHolder holder = new RequestsViewHolder(view);
                         return holder;
                     }

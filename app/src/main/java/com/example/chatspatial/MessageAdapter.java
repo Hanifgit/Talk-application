@@ -151,7 +151,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                     messageViewHolder.senderMessageText.setBackgroundResource(R.drawable.sender_messages_layout);
                     messageViewHolder.senderMessageText.setTextColor(Color.BLACK);
                     messageViewHolder.senderMessageText.setText(messages.getMessage());
-                    messageViewHolder.senderMessageTextDate.setText(messages.getTime() + " - " + messages.getDate()+"\n");
+                    messageViewHolder.senderMessageTextDate.setText(messages.getTime() + " - " + messages.getDate());
                 }
                 else
                 {
@@ -162,41 +162,41 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                     messageViewHolder.receiverMessageText.setBackgroundResource(R.drawable.receiver_messages_layout);
                     messageViewHolder.receiverMessageText.setTextColor(Color.BLACK);
                     messageViewHolder.receiverMessageText.setText(messages.getMessage());
-                    messageViewHolder.receiverMessageTextDate.setText(messages.getTime() + " - " + messages.getDate()+"\n");
+                    messageViewHolder.receiverMessageTextDate.setText(messages.getTime() + " - " + messages.getDate());
                 }
             }
             else if (fromMessageType.equals("image")){
                 if(fromUserID.equals(messageSenderId)){
                     messageViewHolder.messageSenderPicture.setVisibility(View.VISIBLE);
                     messageViewHolder.messageSenderImageDate.setVisibility(View.VISIBLE);
-                    messageViewHolder.messageSenderImageDate.setText(messages.getTime() + " - " + messages.getDate()+"\n");
+                    messageViewHolder.messageSenderImageDate.setText(messages.getTime() + " - " + messages.getDate());
                     Picasso.get().load(messages.getMessage()).into(messageViewHolder.messageSenderPicture);
                 }else{
                     messageViewHolder.receiverProfileImage.setVisibility(View.VISIBLE);
                     messageViewHolder.messageReceiverPicture.setVisibility(View.VISIBLE);
                     messageViewHolder.messageReceiverImageDate.setVisibility(View.VISIBLE);
-                    messageViewHolder.messageReceiverImageDate.setText(messages.getTime() + " - " + messages.getDate()+"\n");
+                    messageViewHolder.messageReceiverImageDate.setText(messages.getTime() + " - " + messages.getDate());
                     Picasso.get().load(messages.getMessage()).into(messageViewHolder.messageReceiverPicture);
                 }
             }
             else if (fromMessageType.equals("pdf") || fromMessageType.equals("docx")){
                 if(fromUserID.equals(messageSenderId)){
                     messageViewHolder.messageSenderPicture.setVisibility(View.VISIBLE);
-                    Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/chat-spatial-app.appspot.com/o/Image%20Files%2Ffile.png?alt=media&token=94efd1f9-ddf9-45a4-9bd4-76a8f51c7886")
+                    Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/chat-spatial-app.appspot.com/o/Image%20Files%2Ffile.png?alt=media&token=33dd7c94-9cd4-4015-9aee-a89cd2830317")
                             .into(messageViewHolder.messageSenderPicture);
                     //messageViewHolder.messageSenderPicture.setBackgroundResource(R.drawable.file);
                     messageViewHolder.messageSenderImageDate.setVisibility(View.VISIBLE);
-                    messageViewHolder.messageSenderImageDate.setText(messages.getTime() + " - " + messages.getDate()+"\n");
+                    messageViewHolder.messageSenderImageDate.setText(messages.getTime() + " - " + messages.getDate());
 
                     //Picasso.get().load(messages.getMessage()).into(messageViewHolder.messageSenderPicture);
                 }else{
                     messageViewHolder.receiverProfileImage.setVisibility(View.VISIBLE);
                     messageViewHolder.messageReceiverPicture.setVisibility(View.VISIBLE);
-                    Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/chat-spatial-app.appspot.com/o/Image%20Files%2Ffile.png?alt=media&token=94efd1f9-ddf9-45a4-9bd4-76a8f51c7886")
+                    Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/chat-spatial-app.appspot.com/o/Image%20Files%2Ffile.png?alt=media&token=33dd7c94-9cd4-4015-9aee-a89cd2830317")
                             .into(messageViewHolder.messageReceiverPicture);
                     //messageViewHolder.messageReceiverPicture.setBackgroundResource(R.drawable.file);
                     messageViewHolder.messageReceiverImageDate.setVisibility(View.VISIBLE);
-                    messageViewHolder.messageReceiverImageDate.setText(messages.getTime() + " - " + messages.getDate()+"\n");
+                    messageViewHolder.messageReceiverImageDate.setText(messages.getTime() + " - " + messages.getDate());
                     //Picasso.get().load(messages.getMessage()).into(messageViewHolder.messageReceiverPicture);
                 }
             }
@@ -206,7 +206,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                     messageViewHolder.senderMessageTextDate.setVisibility(View.VISIBLE);
                     messageViewHolder.senderMessageText.setBackgroundResource(R.drawable.sender_messages_layout);
                     messageViewHolder.senderMessageText.setTextColor(Color.GREEN);
-                    messageViewHolder.senderMessageTextDate.setText(messages.getTime() + " - " + messages.getDate()+"\n");
+                    messageViewHolder.senderMessageTextDate.setText(messages.getTime() + " - " + messages.getDate());
                 }
                 else{
                     messageViewHolder.receiverProfileImage.setVisibility(View.VISIBLE);
@@ -215,7 +215,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
                     messageViewHolder.receiverMessageText.setBackgroundResource(R.drawable.receiver_messages_layout);
                     messageViewHolder.receiverMessageText.setTextColor(Color.RED);
-                    messageViewHolder.receiverMessageTextDate.setText(messages.getTime() + " - " + messages.getDate()+"\n");
+                    messageViewHolder.receiverMessageTextDate.setText(messages.getTime() + " - " + messages.getDate());
                 }
             }
 
